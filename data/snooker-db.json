@@ -1,0 +1,1009 @@
+{
+  "users": [
+    {
+      "id": "usr-admin-1",
+      "name": "Club Manager (Admin)",
+      "username": "admin",
+      "role": "admin",
+      "pin_hash": "$2b$10$UU5RsoGT/MzPSpzoBJCygOeooxjDHEDg/nqDgFl4B5J.wzMAqZEpW",
+      "active": true,
+      "created_at": "2026-08-27T10:12:44.907Z"
+    },
+    {
+      "id": "usr-emp-1",
+      "name": "Hamza Staff (emp786)",
+      "username": "emp786",
+      "role": "employee",
+      "pin_hash": "$2b$10$ew8DvRi3Fk4wTG7K6IkBuuwvmBn04rybqHNZLffRUrzY/LMtNjA1u",
+      "active": true,
+      "created_at": "2026-09-06T10:12:44.908Z"
+    },
+    {
+      "id": "usr-emp-2",
+      "name": "Zeeshan Night Shift",
+      "username": "zeeshan",
+      "role": "employee",
+      "pin_hash": "$2b$10$LNqri9UznAL90cp8wazVHOX7arbzdbXrGhgmqS7zjXpVvYbxT.nt6",
+      "active": true,
+      "created_at": "2026-09-16T10:12:45.066Z"
+    }
+  ],
+  "tables": [
+    {
+      "id": "table-1",
+      "table_number": 1,
+      "name": "Table 1 — Shender Steel Block Pro",
+      "brand": "Shender",
+      "rates": {
+        "ball15": 200,
+        "ball10": 150,
+        "ball6": 100,
+        "centuryPerMin": 6,
+        "hourlyRate": 360
+      },
+      "active": true
+    },
+    {
+      "id": "table-2",
+      "table_number": 2,
+      "name": "Table 2 — Riley Aristocrat Match",
+      "brand": "Riley",
+      "rates": {
+        "ball15": 220,
+        "ball10": 160,
+        "ball6": 110,
+        "centuryPerMin": 7,
+        "hourlyRate": 400
+      },
+      "active": true
+    },
+    {
+      "id": "table-3",
+      "table_number": 3,
+      "name": "Table 3 — Xingpai Star Tournament",
+      "brand": "Xingpai",
+      "rates": {
+        "ball15": 200,
+        "ball10": 150,
+        "ball6": 100,
+        "centuryPerMin": 6,
+        "hourlyRate": 360
+      },
+      "active": true
+    },
+    {
+      "id": "table-4",
+      "table_number": 4,
+      "name": "Table 4 — Wiraka M1 Classic",
+      "brand": "Wiraka",
+      "rates": {
+        "ball15": 180,
+        "ball10": 130,
+        "ball6": 90,
+        "centuryPerMin": 5,
+        "hourlyRate": 320
+      },
+      "active": true
+    },
+    {
+      "id": "table-5",
+      "table_number": 5,
+      "name": "Table 5 — Joy Q8 Pro",
+      "brand": "Joy",
+      "rates": {
+        "ball15": 180,
+        "ball10": 130,
+        "ball6": 90,
+        "centuryPerMin": 5,
+        "hourlyRate": 320
+      },
+      "active": true
+    },
+    {
+      "id": "table-6",
+      "table_number": 6,
+      "name": "Table 6 — Sovereign Masters VIP",
+      "brand": "Sovereign",
+      "rates": {
+        "ball15": 250,
+        "ball10": 180,
+        "ball6": 120,
+        "centuryPerMin": 8,
+        "hourlyRate": 450
+      },
+      "active": true
+    }
+  ],
+  "games": [
+    {
+      "id": "game-1790417590837",
+      "table_id": "table-2",
+      "table_name": "Table 2 — Riley Aristocrat Match",
+      "type": "single",
+      "ball_count": "15 Ball",
+      "rate": 220,
+      "players": [
+        "Test Player 1",
+        "Test Player 2"
+      ],
+      "loser": "Test Player 2",
+      "start_time": "2026-09-26T10:13:10.837Z",
+      "end_time": "2026-09-26T10:13:20.868Z",
+      "duration_minutes": 1,
+      "status": "completed",
+      "payment_method": "cash",
+      "amount": 220,
+      "cash_amount": 220,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "notes": null,
+      "created_at": "2026-09-26T10:13:10.837Z"
+    },
+    {
+      "id": "game-live-1",
+      "table_id": "table-1",
+      "table_name": "Table 1 — Shender Steel Block Pro",
+      "type": "single",
+      "ball_count": "15 Ball",
+      "rate": 200,
+      "players": [
+        "Bilal Khan",
+        "Usman Ali"
+      ],
+      "loser": "Usman Ali",
+      "start_time": "2026-09-26T09:40:45.066Z",
+      "end_time": "2026-09-26T11:13:06.012Z",
+      "duration_minutes": 92,
+      "status": "completed",
+      "payment_method": "free",
+      "amount": 200,
+      "cash_amount": 200,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "notes": "Decider frame",
+      "created_at": "2026-09-26T09:40:45.066Z"
+    },
+    {
+      "id": "game-live-2",
+      "table_id": "table-3",
+      "table_name": "Table 3 — Xingpai Star Tournament",
+      "type": "century",
+      "ball_count": "Century Break",
+      "rate": 6,
+      "players": [
+        "Farhan Butt"
+      ],
+      "loser": null,
+      "start_time": "2026-09-26T09:25:45.066Z",
+      "end_time": null,
+      "duration_minutes": 47,
+      "status": "live",
+      "payment_method": "pending",
+      "amount": 282,
+      "cash_amount": 0,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "notes": "Solo practice break building",
+      "created_at": "2026-09-26T09:25:45.066Z"
+    },
+    {
+      "id": "game-today-1",
+      "table_id": "table-2",
+      "table_name": "Table 2 — Riley Aristocrat Match",
+      "type": "single",
+      "ball_count": "15 Ball",
+      "rate": 220,
+      "players": [
+        "Kamran Sheikh",
+        "Tariq Khan"
+      ],
+      "loser": "Tariq Khan",
+      "start_time": "2026-09-26T07:52:45.066Z",
+      "end_time": "2026-09-26T08:37:45.066Z",
+      "duration_minutes": 45,
+      "status": "completed",
+      "payment_method": "cash",
+      "amount": 220,
+      "cash_amount": 220,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T07:52:45.066Z"
+    },
+    {
+      "id": "game-today-2",
+      "table_id": "table-1",
+      "table_name": "Table 1 — Shender Steel Block Pro",
+      "type": "double",
+      "ball_count": "15 Ball",
+      "rate": 300,
+      "players": [
+        "Zubair Ahmed",
+        "Faizan Shah",
+        "Hamza Cheema",
+        "Shahid Afridi"
+      ],
+      "loser": "Hamza Cheema",
+      "start_time": "2026-09-26T06:42:45.066Z",
+      "end_time": "2026-09-26T07:42:45.066Z",
+      "duration_minutes": 60,
+      "status": "completed",
+      "payment_method": "online",
+      "amount": 300,
+      "cash_amount": 0,
+      "online_amount": 300,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T06:42:45.066Z"
+    },
+    {
+      "id": "game-today-3",
+      "table_id": "table-4",
+      "table_name": "Table 4 — Wiraka M1 Classic",
+      "type": "single",
+      "ball_count": "10 Ball",
+      "rate": 130,
+      "players": [
+        "Ali Raza",
+        "Usman Ali"
+      ],
+      "loser": "Ali Raza",
+      "start_time": "2026-09-26T05:12:45.066Z",
+      "end_time": "2026-09-26T05:47:45.066Z",
+      "duration_minutes": 35,
+      "status": "completed",
+      "payment_method": "cash",
+      "amount": 130,
+      "cash_amount": 130,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-26T05:12:45.066Z"
+    },
+    {
+      "id": "game-today-4",
+      "table_id": "table-6",
+      "table_name": "Table 6 — Sovereign Masters VIP",
+      "type": "final",
+      "ball_count": "Best of 3",
+      "rate": 600,
+      "players": [
+        "Bilal Khan",
+        "Kamran Sheikh"
+      ],
+      "loser": "Bilal Khan",
+      "start_time": "2026-09-26T03:42:45.066Z",
+      "end_time": "2026-09-26T05:02:45.066Z",
+      "duration_minutes": 80,
+      "status": "completed",
+      "payment_method": "split",
+      "amount": 550,
+      "cash_amount": 300,
+      "online_amount": 250,
+      "discount": 50,
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "notes": "Special VIP tournament final frame",
+      "created_at": "2026-09-26T03:42:45.066Z"
+    },
+    {
+      "id": "game-today-5",
+      "table_id": "table-5",
+      "table_name": "Table 5 — Joy Q8 Pro",
+      "type": "single",
+      "ball_count": "6 Ball",
+      "rate": 90,
+      "players": [
+        "Waqas Malik",
+        "Sohaib Butt"
+      ],
+      "loser": "Waqas Malik",
+      "start_time": "2026-09-26T02:12:45.067Z",
+      "end_time": "2026-09-26T02:37:45.067Z",
+      "duration_minutes": 25,
+      "status": "completed",
+      "payment_method": "pending",
+      "amount": 90,
+      "cash_amount": 0,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "notes": "Added to Waqas Malik player bill",
+      "created_at": "2026-09-26T02:12:45.067Z"
+    },
+    {
+      "id": "game-today-6",
+      "table_id": "table-2",
+      "table_name": "Table 2 — Riley Aristocrat Match",
+      "type": "single",
+      "ball_count": "15 Ball",
+      "rate": 220,
+      "players": [
+        "Zeeshan",
+        "Ahmed Noor"
+      ],
+      "loser": null,
+      "start_time": "2026-09-26T01:12:45.067Z",
+      "end_time": "2026-09-26T01:17:45.067Z",
+      "duration_minutes": 5,
+      "status": "cancelled",
+      "payment_method": "free",
+      "amount": 0,
+      "cash_amount": 0,
+      "online_amount": 0,
+      "discount": 0,
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "notes": "Cue stick chalk issue, table changed",
+      "created_at": "2026-09-26T01:12:45.067Z"
+    }
+  ],
+  "playerBills": [
+    {
+      "id": "bill-1",
+      "player_name": "Bilal Khan",
+      "phone": "+92 301 5551234",
+      "game_ids": [
+        "game-live-1",
+        "game-today-4"
+      ],
+      "game_amount": 550,
+      "cafe_amount": 450,
+      "discount": 100,
+      "paid": 700,
+      "loan": 200,
+      "balance": 0,
+      "status": "cleared",
+      "last_activity": "2026-09-26T10:13:54.494Z",
+      "created_at": "2026-09-26T04:12:45.067Z",
+      "updated_at": "2026-09-26T10:13:54.494Z"
+    },
+    {
+      "id": "bill-2",
+      "player_name": "Waqas Malik",
+      "phone": "+92 321 4448899",
+      "game_ids": [
+        "game-today-5"
+      ],
+      "game_amount": 90,
+      "cafe_amount": 180,
+      "discount": 0,
+      "paid": 0,
+      "loan": 0,
+      "balance": 270,
+      "status": "pending",
+      "last_activity": "2026-09-26T10:12:45.067Z",
+      "created_at": "2026-09-26T03:32:45.067Z",
+      "updated_at": "2026-09-26T10:12:45.067Z"
+    },
+    {
+      "id": "bill-3",
+      "player_name": "Kamran Sheikh",
+      "phone": "+92 333 9991122",
+      "game_ids": [
+        "game-today-1",
+        "game-today-4"
+      ],
+      "game_amount": 220,
+      "cafe_amount": 320,
+      "discount": 0,
+      "paid": 540,
+      "loan": 0,
+      "balance": 0,
+      "status": "cleared",
+      "last_activity": "2026-09-26T08:42:45.067Z",
+      "created_at": "2026-09-26T03:32:45.067Z",
+      "updated_at": "2026-09-26T08:42:45.067Z"
+    },
+    {
+      "id": "bill-4",
+      "player_name": "Farhan Butt",
+      "phone": "+92 300 7776655",
+      "game_ids": [
+        "game-live-2"
+      ],
+      "game_amount": 282,
+      "cafe_amount": 100,
+      "discount": 0,
+      "paid": 0,
+      "loan": 0,
+      "balance": 382,
+      "status": "pending",
+      "last_activity": "2026-09-26T10:12:45.067Z",
+      "created_at": "2026-09-26T09:27:45.067Z",
+      "updated_at": "2026-09-26T10:12:45.067Z"
+    },
+    {
+      "id": "bill-1790417600869",
+      "player_name": "Test Player 2",
+      "phone": "",
+      "game_ids": [
+        "game-1790417590837"
+      ],
+      "game_amount": 220,
+      "cafe_amount": 0,
+      "discount": 0,
+      "paid": 220,
+      "loan": 0,
+      "balance": 0,
+      "status": "cleared",
+      "last_activity": "2026-09-26T10:13:20.868Z",
+      "created_at": "2026-09-26T10:13:20.868Z",
+      "updated_at": "2026-09-26T10:13:20.868Z"
+    },
+    {
+      "id": "bill-1790419287893",
+      "player_name": "ALi",
+      "phone": "",
+      "game_ids": [],
+      "game_amount": 0,
+      "cafe_amount": 90,
+      "discount": 0,
+      "paid": 0,
+      "loan": 0,
+      "balance": 90,
+      "status": "pending",
+      "last_activity": "2026-09-26T10:41:27.893Z",
+      "created_at": "2026-09-26T10:41:27.893Z",
+      "updated_at": "2026-09-26T10:41:27.893Z"
+    },
+    {
+      "id": "bill-1790421186012",
+      "player_name": "Usman Ali",
+      "phone": "",
+      "game_ids": [
+        "game-live-1"
+      ],
+      "game_amount": 200,
+      "cafe_amount": 0,
+      "discount": 0,
+      "paid": 200,
+      "loan": 0,
+      "balance": 0,
+      "status": "cleared",
+      "last_activity": "2026-09-26T11:13:06.012Z",
+      "created_at": "2026-09-26T11:13:06.012Z",
+      "updated_at": "2026-09-26T11:13:06.012Z"
+    }
+  ],
+  "loans": [
+    {
+      "id": "loan-1790417634494",
+      "customer_name": "Bilal Khan",
+      "phone": "+92 301 5551234",
+      "amount": 200,
+      "paid": 0,
+      "remaining": 200,
+      "date": "2026-09-26",
+      "reason": "Converted remainder of match & cafe tab",
+      "status": "outstanding",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-26T10:13:54.494Z"
+    },
+    {
+      "id": "loan-1",
+      "customer_name": "Tariq Khan",
+      "phone": "+92 302 8889900",
+      "amount": 2500,
+      "paid": 1000,
+      "remaining": 1500,
+      "date": "2026-09-26",
+      "reason": "Late night game loss + café tab conversion",
+      "status": "partial",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T08:12:45.067Z"
+    },
+    {
+      "id": "loan-2",
+      "customer_name": "Ali Raza",
+      "phone": "+92 304 4443322",
+      "amount": 1200,
+      "paid": 1200,
+      "remaining": 0,
+      "date": "2026-09-25",
+      "reason": "Monthly cue locker + games tab",
+      "status": "paid",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-25T10:12:45.067Z"
+    },
+    {
+      "id": "loan-3",
+      "customer_name": "Shahid Afridi (Member)",
+      "phone": "+92 322 1122334",
+      "amount": 800,
+      "paid": 0,
+      "remaining": 800,
+      "date": "2026-09-26",
+      "reason": "Double tournament entry fee balance",
+      "status": "outstanding",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T07:12:45.067Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp-1",
+      "date": "2026-09-26",
+      "category": "Electricity",
+      "amount": 3500,
+      "note": "AC unit recharge and daily generator fuel support",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-26T05:12:45.067Z"
+    },
+    {
+      "id": "exp-2",
+      "date": "2026-09-26",
+      "category": "Maintenance & Cloth",
+      "amount": 1200,
+      "note": "Cloth iron servicing, table brushing, 2 box Triangle Chalk",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T06:12:45.067Z"
+    },
+    {
+      "id": "exp-3",
+      "date": "2026-09-26",
+      "category": "Staff Food",
+      "amount": 750,
+      "note": "Lunch for day and evening shift staff",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T07:12:45.067Z"
+    },
+    {
+      "id": "exp-4",
+      "date": "2026-09-25",
+      "category": "Misc",
+      "amount": 500,
+      "note": "Cleaning supplies & microfiber towels",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-25T10:12:45.067Z"
+    }
+  ],
+  "revenue": [
+    {
+      "id": "rev-2",
+      "date": "2026-09-26",
+      "category": "Tournament Fee",
+      "amount": 2000,
+      "payment_method": "online",
+      "note": "Weekend 15-Ball Open Tournament Registration (4 slots)",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-26T07:02:45.067Z"
+    },
+    {
+      "id": "rev-1",
+      "date": "2026-09-26",
+      "category": "Cue Locker Rent",
+      "amount": 1500,
+      "payment_method": "cash",
+      "note": "Locker #14 quarterly advance from Usman Ali",
+      "employee_id": "usr-admin-1",
+      "employee_name": "Club Manager",
+      "created_at": "2026-09-26T06:02:45.067Z"
+    }
+  ],
+  "cafeItems": [
+    {
+      "id": "c-item-1",
+      "name": "Red Bull Energy Drink",
+      "category": "Beverages",
+      "purchase_price": 240,
+      "sale_price": 320,
+      "stock": 29,
+      "active": true
+    },
+    {
+      "id": "c-item-2",
+      "name": "Sting Berry Blast 300ml",
+      "category": "Beverages",
+      "purchase_price": 60,
+      "sale_price": 90,
+      "stock": 44,
+      "active": true
+    },
+    {
+      "id": "c-item-3",
+      "name": "Coca-Cola Can 250ml",
+      "category": "Beverages",
+      "purchase_price": 70,
+      "sale_price": 100,
+      "stock": 50,
+      "active": true
+    },
+    {
+      "id": "c-item-4",
+      "name": "Mineral Water 500ml",
+      "category": "Beverages",
+      "purchase_price": 30,
+      "sale_price": 50,
+      "stock": 80,
+      "active": true
+    },
+    {
+      "id": "c-item-5",
+      "name": "Fresh Mint Margarita",
+      "category": "Beverages",
+      "purchase_price": 90,
+      "sale_price": 180,
+      "stock": 30,
+      "active": true
+    },
+    {
+      "id": "c-item-6",
+      "name": "Special Karak Doodh Patti",
+      "category": "Hot Drinks",
+      "purchase_price": 35,
+      "sale_price": 80,
+      "stock": 118,
+      "active": true
+    },
+    {
+      "id": "c-item-7",
+      "name": "Peshawari Qahwa (Cardamom)",
+      "category": "Hot Drinks",
+      "purchase_price": 25,
+      "sale_price": 60,
+      "stock": 90,
+      "active": true
+    },
+    {
+      "id": "c-item-8",
+      "name": "Double Shot Espresso",
+      "category": "Hot Drinks",
+      "purchase_price": 70,
+      "sale_price": 160,
+      "stock": 40,
+      "active": true
+    },
+    {
+      "id": "c-item-9",
+      "name": "Lays French Cheese Large",
+      "category": "Snacks",
+      "purchase_price": 50,
+      "sale_price": 80,
+      "stock": 35,
+      "active": true
+    },
+    {
+      "id": "c-item-10",
+      "name": "Roasted Salted Peanuts",
+      "category": "Snacks",
+      "purchase_price": 45,
+      "sale_price": 80,
+      "stock": 28,
+      "active": true
+    },
+    {
+      "id": "c-item-11",
+      "name": "Dunhill Switch (Single)",
+      "category": "Cigarettes",
+      "purchase_price": 26,
+      "sale_price": 35,
+      "stock": 60,
+      "active": true
+    },
+    {
+      "id": "c-item-12",
+      "name": "Marlboro Gold (Single)",
+      "category": "Cigarettes",
+      "purchase_price": 25,
+      "sale_price": 35,
+      "stock": 55,
+      "active": true
+    },
+    {
+      "id": "c-item-13",
+      "name": "Club Sandwich with Fries",
+      "category": "Fast Food",
+      "purchase_price": 220,
+      "sale_price": 380,
+      "stock": 15,
+      "active": true
+    },
+    {
+      "id": "c-item-14",
+      "name": "Crispy Zinger Roll",
+      "category": "Fast Food",
+      "purchase_price": 180,
+      "sale_price": 320,
+      "stock": 18,
+      "active": true
+    },
+    {
+      "id": "c-item-15",
+      "name": "French Fries Bucket",
+      "category": "Fast Food",
+      "purchase_price": 80,
+      "sale_price": 160,
+      "stock": 25,
+      "active": true
+    }
+  ],
+  "cafeOrders": [
+    {
+      "id": "order-1790419287893",
+      "player_name_or_walkin": "ALi",
+      "is_walkin": false,
+      "items": [
+        {
+          "itemId": "c-item-2",
+          "name": "Sting Berry Blast 300ml",
+          "category": "Beverages",
+          "quantity": 1,
+          "unitPrice": 90,
+          "subtotal": 90
+        }
+      ],
+      "total": 90,
+      "discount": 0,
+      "net_total": 90,
+      "payment_method": "bill",
+      "status": "completed",
+      "date": "2026-09-26",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff (emp786)",
+      "created_at": "2026-09-26T10:41:27.893Z"
+    },
+    {
+      "id": "order-1790417617060",
+      "player_name_or_walkin": "Bilal Khan",
+      "is_walkin": false,
+      "items": [
+        {
+          "itemId": "c-item-6",
+          "name": "Special Karak Doodh Patti",
+          "category": "Hot Drinks",
+          "quantity": 2,
+          "unitPrice": 80,
+          "subtotal": 160
+        }
+      ],
+      "total": 160,
+      "discount": 0,
+      "net_total": 160,
+      "payment_method": "bill",
+      "status": "completed",
+      "date": "2026-09-26",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T10:13:37.060Z"
+    },
+    {
+      "id": "order-1",
+      "player_name_or_walkin": "Bilal Khan",
+      "is_walkin": false,
+      "items": [
+        {
+          "itemId": "c-item-1",
+          "name": "Red Bull Energy Drink",
+          "category": "Beverages",
+          "quantity": 1,
+          "unitPrice": 320,
+          "subtotal": 320
+        }
+      ],
+      "total": 320,
+      "discount": 30,
+      "net_total": 290,
+      "payment_method": "bill",
+      "status": "completed",
+      "date": "2026-09-26",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T08:32:45.067Z"
+    },
+    {
+      "id": "order-2",
+      "player_name_or_walkin": "Walk-in Guest",
+      "is_walkin": true,
+      "items": [
+        {
+          "itemId": "c-item-6",
+          "name": "Special Karak Doodh Patti",
+          "category": "Hot Drinks",
+          "quantity": 2,
+          "unitPrice": 80,
+          "subtotal": 160
+        },
+        {
+          "itemId": "c-item-9",
+          "name": "Lays French Cheese Large",
+          "category": "Snacks",
+          "quantity": 1,
+          "unitPrice": 80,
+          "subtotal": 80
+        }
+      ],
+      "total": 240,
+      "discount": 0,
+      "net_total": 240,
+      "payment_method": "cash",
+      "status": "completed",
+      "date": "2026-09-26",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T08:57:45.067Z"
+    },
+    {
+      "id": "order-3",
+      "player_name_or_walkin": "Waqas Malik",
+      "is_walkin": false,
+      "items": [
+        {
+          "itemId": "c-item-5",
+          "name": "Fresh Mint Margarita",
+          "category": "Beverages",
+          "quantity": 1,
+          "unitPrice": 180,
+          "subtotal": 180
+        }
+      ],
+      "total": 180,
+      "discount": 0,
+      "net_total": 180,
+      "payment_method": "bill",
+      "status": "completed",
+      "date": "2026-09-26",
+      "employee_id": "usr-emp-1",
+      "employee_name": "Hamza Staff",
+      "created_at": "2026-09-26T09:22:45.067Z"
+    }
+  ],
+  "voidRequests": [
+    {
+      "id": "void-req-1",
+      "game_id": "game-today-6",
+      "table_name": "Table 2 — Riley Aristocrat Match",
+      "amount": 220,
+      "reason": "Player chalked wrong ball and cue stick tip damaged within 2 mins of start. Mutually agreed to void and restart.",
+      "requested_by_id": "usr-emp-1",
+      "requested_by_name": "Hamza Staff (emp786)",
+      "status": "pending",
+      "created_at": "2026-09-26T09:32:45.067Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit-1790421186016",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager (Admin)",
+      "action": "game_end",
+      "entity": "game",
+      "entity_id": "game-live-1",
+      "details": "Ended game on Table 1 — Shender Steel Block Pro. Loser: Usman Ali. Total: Rs. 200 (free)",
+      "timestamp": "2026-09-26T11:13:06.012Z"
+    },
+    {
+      "id": "audit-1790421056872",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager (Admin)",
+      "action": "inventory_restock",
+      "entity": "cafe_item",
+      "entity_id": "c-item-1",
+      "details": "Restocked Red Bull Energy Drink (+5). Old: 24, New: 29",
+      "timestamp": "2026-09-26T11:10:56.872Z"
+    },
+    {
+      "id": "audit-1790419287894",
+      "actor_id": "usr-emp-1",
+      "actor_name": "Hamza Staff (emp786)",
+      "action": "cafe_order_created",
+      "entity": "cafe_order",
+      "entity_id": "order-1790419287893",
+      "details": "Placed Café Order for ALi (Total: Rs. 90, Method: bill)",
+      "timestamp": "2026-09-26T10:41:27.894Z"
+    },
+    {
+      "id": "audit-1790417634496",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager",
+      "action": "bill_checkout",
+      "entity": "bill",
+      "entity_id": "bill-1",
+      "details": "Checkout for Bilal Khan: Paid Rs. 300 (cash), converted Rs. 200 to Loan. New Balance: Rs. 0",
+      "timestamp": "2026-09-26T10:13:54.494Z"
+    },
+    {
+      "id": "audit-1790417617063",
+      "actor_id": "usr-emp-1",
+      "actor_name": "Hamza Staff",
+      "action": "cafe_order_created",
+      "entity": "cafe_order",
+      "entity_id": "order-1790417617060",
+      "details": "Placed Café Order for Bilal Khan (Total: Rs. 160, Method: bill)",
+      "timestamp": "2026-09-26T10:13:37.063Z"
+    },
+    {
+      "id": "audit-1790417600870",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager",
+      "action": "game_end",
+      "entity": "game",
+      "entity_id": "game-1790417590837",
+      "details": "Ended game on Table 2 — Riley Aristocrat Match. Loser: Test Player 2. Total: Rs. 220 (cash)",
+      "timestamp": "2026-09-26T10:13:20.868Z"
+    },
+    {
+      "id": "audit-1790417590838",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager",
+      "action": "game_start",
+      "entity": "game",
+      "entity_id": "game-1790417590837",
+      "details": "Started SINGLE game on Table 2 — Riley Aristocrat Match (Test Player 1 vs Test Player 2)",
+      "timestamp": "2026-09-26T10:13:10.838Z"
+    },
+    {
+      "id": "audit-1",
+      "actor_id": "usr-emp-1",
+      "actor_name": "Hamza Staff",
+      "action": "game_start",
+      "entity": "game",
+      "entity_id": "game-live-1",
+      "details": "Started Single 15-Ball game on Table 1 between Bilal Khan and Usman Ali (Rs. 200)",
+      "timestamp": "2026-09-26T09:40:45.067Z"
+    },
+    {
+      "id": "audit-2",
+      "actor_id": "usr-emp-1",
+      "actor_name": "Hamza Staff",
+      "action": "game_start",
+      "entity": "game",
+      "entity_id": "game-live-2",
+      "details": "Started Century Break session on Table 3 for Farhan Butt (Rs. 6/min)",
+      "timestamp": "2026-09-26T09:25:45.067Z"
+    },
+    {
+      "id": "audit-3",
+      "actor_id": "usr-emp-1",
+      "actor_name": "Hamza Staff",
+      "action": "cafe_order_created",
+      "entity": "cafe",
+      "entity_id": "order-1",
+      "details": "Added Red Bull to Bilal Khan's bill (Rs. 290 after Rs. 30 discount)",
+      "timestamp": "2026-09-26T08:32:45.067Z"
+    },
+    {
+      "id": "audit-4",
+      "actor_id": "usr-admin-1",
+      "actor_name": "Club Manager",
+      "action": "loan_added",
+      "entity": "loan",
+      "entity_id": "loan-1",
+      "details": "Recorded loan of Rs. 2,500 for Tariq Khan (Rs. 1,000 paid immediately)",
+      "timestamp": "2026-09-26T08:12:45.067Z"
+    }
+  ],
+  "settings": {
+    "club_name": "Green Baize Snooker Lounge",
+    "phone": "+92 300 8472910",
+    "address": "Plot 42, Commercial Sector Y, Phase 3 DHA, Lahore",
+    "currency": "Rs.",
+    "table_count": 4,
+    "century_rate_per_min": 3,
+    "receipt_footer": "Green Baize Snooker Lounge • Champions Play Here",
+    "last_cash_collection": {
+      "collected_at": "2026-09-25T10:12:45.067Z",
+      "collected_by": "Club Manager",
+      "amount": 14200
+    }
+  }
+}
