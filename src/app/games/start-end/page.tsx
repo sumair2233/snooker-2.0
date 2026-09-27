@@ -12,6 +12,9 @@ import {
   Percent,
   Flame,
   Check,
+  Shield,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import confetti from "canvas-confetti";
@@ -90,9 +93,21 @@ export default function StartEndGamePage() {
         prev[3] || "",
       ]);
     } else if (gameType === "century") {
-      setPlayers(["Solo Break Player"]);
+      setPlayers((prev) => (prev.length >= 1 ? prev : [""]));
     }
   }, [gameType]);
+
+  const addCenturyPlayer = () => {
+    if (players.length < 10) {
+      setPlayers([...players, ""]);
+    }
+  };
+
+  const removeCenturyPlayer = (index: number) => {
+    if (players.length > 1) {
+      setPlayers(players.filter((_, i) => i !== index));
+    }
+  };
 
   // Set default rate when active table or ball count changes
   const activeTable = tables.find((t) => t.id === tableId) || tables[0];
@@ -128,7 +143,13 @@ export default function StartEndGamePage() {
       setDiscount(0);
       setEndNotes(selectedEndGame.notes || "");
       if (selectedEndGame.players.length > 0) {
-        setLoser(selectedEndGame.players[1] || selectedEndGame.players[0]);
+        if (selectedEndGame.type === "double" && selectedEndGame.players.length >= 4) {
+          setLoser(`Team 2 (${selectedEndGame.players[2]} & ${selectedEndGame.players[3]})`);
+        } else if (selectedEndGame.type === "century") {
+          setLoser("");
+        } else {
+          setLoser(selectedEndGame.players[1] || selectedEndGame.players[0]);
+        }
       }
     }
   }, [selectedEndGame]);
@@ -144,15 +165,31 @@ export default function StartEndGamePage() {
       return;
     }
 
-    const validPlayers =
-      gameType === "century"
-        ? [players[0] || "Solo Break Builder"]
-        : players.map((p) => p.trim()).filter(Boolean);
-
-    if (gameType !== "century" && validPlayers.length < (gameType === "double" ? 4 : 2)) {
-      setStartError(`Please enter all player names for ${gameType}`);
-      return;
+    if (gameType === "double") {
+      const p1 = players[0]?.trim();
+      const p2 = players[1]?.trim();
+      const p3 = players[2]?.trim();
+      const p4 = players[3]?.trim();
+      if (!p1 || !p2 || !p3 || !p4) {
+        setStartError("Please enter all 4 player names for Double (Team 1: 2 players, Team 2: 2 players)");
+        return;
+      }
+    } else if (gameType === "century") {
+      const validCenturyPlayers = players.map((p) => p.trim()).filter(Boolean);
+      if (validCenturyPlayers.length === 0) {
+        setStartError("Please enter at least 1 player name for Century");
+        return;
+      }
+    } else {
+      const p1 = players[0]?.trim();
+      const p2 = players[1]?.trim();
+      if (!p1 || !p2) {
+        setStartError("Please enter both player names for Single match");
+        return;
+      }
     }
+
+    const validPlayers = players.map((p) => p.trim()).filter(Boolean);
 
     setStartLoading(true);
     try {
@@ -378,22 +415,157 @@ export default function StartEndGamePage() {
 
             {/* Players */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 flex justify-between">
-                <span>Player Names</span>
-                <span className="text-[10px] text-emerald-400">
-                  {gameType === "double" ? "4 Players" : gameType === "century" ? "Practice Break" : "2 Players"}
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  {gameType === "double"
+                    ? "Teams & Players"
+                    : gameType === "century"
+                    ? "Century Players"
+                    : "Player Names"}
+                </label>
+                <span className="text-[10px] text-amber-400 font-medium">
+                  {gameType === "double"
+                    ? "2 Players per Team (4 Total)"
+                    : gameType === "century"
+                    ? `${players.length}/10 Players`
+                    : "Player 1 vs Player 2"}
                 </span>
-              </label>
+              </div>
 
-              {gameType === "century" ? (
-                <input
-                  type="text"
-                  value={players[0] || ""}
-                  onChange={(e) => setPlayers([e.target.value])}
-                  placeholder="Player Name (Optional)"
-                  className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none"
-                />
+              {gameType === "double" ? (
+                /* Double: Team 1 & Team 2 */
+                <div className="space-y-3">
+                  {/* Team 1 */}
+                  <div className="rounded-xl border border-emerald-800/70 bg-[#0d2217] p-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-2">
+                      <Shield className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>TEAM 1</span>
+                      <span className="text-[10px] text-gray-400 font-normal ml-auto">Players 1 & 2</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-2 text-[10px] font-bold text-emerald-500">T1-P1</span>
+                        <input
+                          type="text"
+                          value={players[0] || ""}
+                          onChange={(e) => {
+                            const updated = [...players];
+                            updated[0] = e.target.value;
+                            setPlayers(updated);
+                          }}
+                          placeholder="Player 1 Name"
+                          className="w-full rounded-lg border border-emerald-900 bg-[#08150f] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                        />
+                      </div>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-2 text-[10px] font-bold text-emerald-500">T1-P2</span>
+                        <input
+                          type="text"
+                          value={players[1] || ""}
+                          onChange={(e) => {
+                            const updated = [...players];
+                            updated[1] = e.target.value;
+                            setPlayers(updated);
+                          }}
+                          placeholder="Player 2 Name"
+                          className="w-full rounded-lg border border-emerald-900 bg-[#08150f] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center my-0.5">
+                    <span className="rounded-full bg-[#13271c] border border-amber-500/40 px-3 py-0.5 text-[10px] font-bold text-amber-400 tracking-wider uppercase">
+                      VS
+                    </span>
+                  </div>
+
+                  {/* Team 2 */}
+                  <div className="rounded-xl border border-amber-800/60 bg-[#1c1a0e] p-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300 mb-2">
+                      <Shield className="h-3.5 w-3.5 text-amber-400" />
+                      <span>TEAM 2</span>
+                      <span className="text-[10px] text-gray-400 font-normal ml-auto">Players 3 & 4</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-2 text-[10px] font-bold text-amber-500">T2-P1</span>
+                        <input
+                          type="text"
+                          value={players[2] || ""}
+                          onChange={(e) => {
+                            const updated = [...players];
+                            updated[2] = e.target.value;
+                            setPlayers(updated);
+                          }}
+                          placeholder="Player 3 Name"
+                          className="w-full rounded-lg border border-amber-950 bg-[#100f07] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                        />
+                      </div>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-2 text-[10px] font-bold text-amber-500">T2-P2</span>
+                        <input
+                          type="text"
+                          value={players[3] || ""}
+                          onChange={(e) => {
+                            const updated = [...players];
+                            updated[3] = e.target.value;
+                            setPlayers(updated);
+                          }}
+                          placeholder="Player 4 Name"
+                          className="w-full rounded-lg border border-amber-950 bg-[#100f07] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : gameType === "century" ? (
+                /* Century: Up to 10 players */
+                <div className="space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1">
+                    {players.map((p, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 relative">
+                        <span className="absolute left-2.5 top-2 text-[10px] font-bold text-gray-500">
+                          #{idx + 1}
+                        </span>
+                        <input
+                          type="text"
+                          value={p}
+                          onChange={(e) => {
+                            const updated = [...players];
+                            updated[idx] = e.target.value;
+                            setPlayers(updated);
+                          }}
+                          placeholder={`Player ${idx + 1} Name`}
+                          className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] pl-8 pr-8 py-2 text-xs text-white focus:border-amber-500 focus:outline-none"
+                        />
+                        {players.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeCenturyPlayer(idx)}
+                            className="absolute right-2 p-1 text-gray-500 hover:text-rose-400 transition-colors"
+                            title="Remove player"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {players.length < 10 && (
+                    <button
+                      type="button"
+                      onClick={addCenturyPlayer}
+                      className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-emerald-700/60 bg-emerald-950/20 hover:bg-emerald-950/40 py-2 text-xs font-semibold text-emerald-300 transition-all cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Add Player ({players.length}/10)</span>
+                    </button>
+                  )}
+                </div>
               ) : (
+                /* Single / Final (2 Players) */
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {players.map((p, idx) => (
                     <div key={idx} className="relative">
@@ -546,16 +718,88 @@ export default function StartEndGamePage() {
                     {selectedEndGame.type} • {selectedEndGame.ball_count}
                   </span>
                 </div>
-                <div className="flex justify-between text-gray-300 border-t border-emerald-950 pt-2">
-                  <span>Players: {selectedEndGame.players.join(", ")}</span>
-                  <span className="text-emerald-400 font-bold">
-                    Rate: {currency} {selectedEndGame.rate}
-                  </span>
-                </div>
+
+                {selectedEndGame.type === "double" && selectedEndGame.players.length >= 4 ? (
+                  <div className="border-t border-emerald-950/80 pt-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-emerald-300 flex items-center gap-1">
+                        <Shield className="h-3 w-3 text-emerald-400" /> Team 1:
+                      </span>
+                      <span className="text-white font-medium">{selectedEndGame.players[0]} & {selectedEndGame.players[1]}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-amber-300 flex items-center gap-1">
+                        <Shield className="h-3 w-3 text-amber-400" /> Team 2:
+                      </span>
+                      <span className="text-white font-medium">{selectedEndGame.players[2]} & {selectedEndGame.players[3]}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-gray-300 border-t border-emerald-950 pt-2">
+                    <span>
+                      {selectedEndGame.type === "century" ? `Century Players (${selectedEndGame.players.length}): ` : "Players: "}
+                      {selectedEndGame.players.join(", ")}
+                    </span>
+                    <span className="text-emerald-400 font-bold">
+                      Rate: {currency} {selectedEndGame.rate}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Loser Selector */}
-              {selectedEndGame.type !== "century" && (
+              {/* Loser / Payer Selector */}
+              {selectedEndGame.type === "double" && selectedEndGame.players.length >= 4 ? (
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1 flex items-center justify-between">
+                    <span>Losing Team / Payer (Bill Given to Team)</span>
+                    <span className="text-[10px] text-amber-400 font-normal">Team Bill</span>
+                  </label>
+                  <select
+                    value={loser}
+                    onChange={(e) => setLoser(e.target.value)}
+                    className="w-full rounded-xl border border-amber-500/50 bg-[#0d1e15] px-3 py-2 text-xs font-bold text-amber-300 focus:border-amber-400 focus:outline-none"
+                  >
+                    <optgroup label="Double Teams (Bill Assigned to Team)">
+                      <option value={`Team 1 (${selectedEndGame.players[0]} & ${selectedEndGame.players[1]})`}>
+                        🏆 Team 1: {selectedEndGame.players[0]} & {selectedEndGame.players[1]} (Bill to Team 1)
+                      </option>
+                      <option value={`Team 2 (${selectedEndGame.players[2]} & ${selectedEndGame.players[3]})`}>
+                        🏆 Team 2: {selectedEndGame.players[2]} & {selectedEndGame.players[3]} (Bill to Team 2)
+                      </option>
+                    </optgroup>
+                    <optgroup label="Individual Players">
+                      {selectedEndGame.players.map((p, idx) => (
+                        <option key={p} value={p}>
+                          {p} (Team {idx < 2 ? "1" : "2"} - Individual)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <option value="">Split payment / None</option>
+                  </select>
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Selecting a team assigns the bill tab directly to that team in the ledger.
+                  </p>
+                </div>
+              ) : selectedEndGame.type === "century" ? (
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1 flex items-center justify-between">
+                    <span>Bill Payer ({selectedEndGame.players.length} Players)</span>
+                    <span className="text-[10px] text-emerald-400 font-normal">Century Break</span>
+                  </label>
+                  <select
+                    value={loser}
+                    onChange={(e) => setLoser(e.target.value)}
+                    className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] px-3 py-2 text-xs font-semibold text-white focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="">Split Evenly (All {selectedEndGame.players.length} Players)</option>
+                    {selectedEndGame.players.map((p) => (
+                      <option key={p} value={p}>
+                        {p} (Pays Full Bill)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
                     Frame Loser (Bill Payer)

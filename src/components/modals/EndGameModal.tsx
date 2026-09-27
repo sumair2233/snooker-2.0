@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Game, PaymentMethod } from "@/types";
-import { X, CheckCircle2, Clock, Users, ShieldAlert, DollarSign } from "lucide-react";
+import { X, CheckCircle2, Clock, Users, ShieldAlert, DollarSign, Shield } from "lucide-react";
 import { useSession } from "next-auth/react";
 import confetti from "canvas-confetti";
 
@@ -60,7 +60,14 @@ export function EndGameModal({
       setDiscount(0);
       setNotes(currentGame.notes || "");
       if (currentGame.players.length > 0) {
-        setLoser(currentGame.players[1] || currentGame.players[0]);
+        if (currentGame.type === "double" && currentGame.players.length >= 4) {
+          // Default bill to Team 2
+          setLoser(`Team 2 (${currentGame.players[2]} & ${currentGame.players[3]})`);
+        } else if (currentGame.type === "century") {
+          setLoser("");
+        } else {
+          setLoser(currentGame.players[1] || currentGame.players[0]);
+        }
       }
     } else if (activeGames.length > 0) {
       setSelectedGameId(activeGames[0].id);
@@ -227,14 +234,87 @@ export function EndGameModal({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-emerald-300 border-t border-emerald-950 pt-2">
-                <Users className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">Players: {currentGame.players.join(", ")}</span>
-              </div>
+              {currentGame.type === "double" && currentGame.players.length >= 4 ? (
+                <div className="border-t border-emerald-950/80 pt-2 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-emerald-300 flex items-center gap-1">
+                      <Shield className="h-3 w-3 text-emerald-400" /> Team 1:
+                    </span>
+                    <span className="text-white font-medium">{currentGame.players[0]} & {currentGame.players[1]}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-amber-300 flex items-center gap-1">
+                      <Shield className="h-3 w-3 text-amber-400" /> Team 2:
+                    </span>
+                    <span className="text-white font-medium">{currentGame.players[2]} & {currentGame.players[3]}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs text-emerald-300 border-t border-emerald-950 pt-2">
+                  <Users className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">
+                    {currentGame.type === "century"
+                      ? `Players (${currentGame.players.length}): `
+                      : "Players: "}
+                    {currentGame.players.join(", ")}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Loser Selector (for single/double) */}
-            {currentGame.type !== "century" && (
+            {/* Loser / Payer Selector */}
+            {currentGame.type === "double" && currentGame.players.length >= 4 ? (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1 flex items-center justify-between">
+                  <span>Losing Team / Payer (Bill Given to Team)</span>
+                  <span className="text-[10px] text-amber-400 font-normal">Team Bill</span>
+                </label>
+                <select
+                  value={loser}
+                  onChange={(e) => setLoser(e.target.value)}
+                  className="w-full rounded-xl border border-amber-500/50 bg-[#0d1e15] px-3 py-2 text-xs font-bold text-amber-300 focus:border-amber-400 focus:outline-none"
+                >
+                  <optgroup label="Double Teams (Bill Assigned to Team)">
+                    <option value={`Team 1 (${currentGame.players[0]} & ${currentGame.players[1]})`}>
+                      🏆 Team 1: {currentGame.players[0]} & {currentGame.players[1]} (Bill to Team 1)
+                    </option>
+                    <option value={`Team 2 (${currentGame.players[2]} & ${currentGame.players[3]})`}>
+                      🏆 Team 2: {currentGame.players[2]} & {currentGame.players[3]} (Bill to Team 2)
+                    </option>
+                  </optgroup>
+                  <optgroup label="Individual Players">
+                    {currentGame.players.map((p, idx) => (
+                      <option key={p} value={p}>
+                        {p} (Team {idx < 2 ? "1" : "2"} - Individual)
+                      </option>
+                    ))}
+                  </optgroup>
+                  <option value="">Split Evenly / None</option>
+                </select>
+                <p className="text-[10px] text-gray-400 mt-1">
+                  Selecting a team creates the bill under that team&apos;s name in the Player Ledger.
+                </p>
+              </div>
+            ) : currentGame.type === "century" ? (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1 flex items-center justify-between">
+                  <span>Bill Payer ({currentGame.players.length} Players)</span>
+                  <span className="text-[10px] text-emerald-400 font-normal">Century Break</span>
+                </label>
+                <select
+                  value={loser}
+                  onChange={(e) => setLoser(e.target.value)}
+                  className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] px-3 py-2 text-xs font-semibold text-white focus:border-amber-500 focus:outline-none"
+                >
+                  <option value="">Split Evenly (All {currentGame.players.length} Players)</option>
+                  {currentGame.players.map((p) => (
+                    <option key={p} value={p}>
+                      {p} (Pays Full Bill)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
                   Loser / Payer (Game Loss)

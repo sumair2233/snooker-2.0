@@ -657,11 +657,31 @@ export default function DashboardPage() {
                       {game.ball_count}
                     </td>
                     <td className="py-3 px-3 font-medium text-gray-200">
-                      {game.players.join(" vs ")}
+                      {game.type === "double" && game.players.length >= 4 ? (
+                        <div className="space-y-0.5 text-[11px]">
+                          <div><span className="text-emerald-400 font-bold">T1:</span> {game.players[0]} & {game.players[1]}</div>
+                          <div><span className="text-amber-400 font-bold">T2:</span> {game.players[2]} & {game.players[3]}</div>
+                        </div>
+                      ) : game.type === "century" ? (
+                        <div>
+                          <span>{game.players.join(", ")}</span>
+                          {game.players.length > 1 && (
+                            <span className="ml-1.5 rounded bg-emerald-950 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-800">
+                              {game.players.length}P
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        game.players.join(" vs ")
+                      )}
                     </td>
                     <td className="py-3 px-3">
                       {game.loser ? (
-                        <span className="rounded bg-rose-950 px-1.5 py-0.5 text-[10px] font-bold text-rose-300 border border-rose-900/40">
+                        <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${
+                          game.loser.includes("Team")
+                            ? "bg-amber-950/80 text-amber-300 border-amber-800/60"
+                            : "bg-rose-950 text-rose-300 border-rose-900/40"
+                        }`}>
                           {game.loser}
                         </span>
                       ) : (

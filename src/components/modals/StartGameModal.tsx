@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ClubTable, GameType } from "@/types";
-import { X, Play, Clock, Users, Sparkles } from "lucide-react";
+import { X, Play, Clock, Users, Sparkles, Plus, Trash2, Swords, Shield } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface StartGameModalProps {
@@ -58,9 +58,21 @@ export function StartGameModal({
         prev[3] || "",
       ]);
     } else if (gameType === "century") {
-      setPlayers((prev) => [prev[0] || "Solo Break Builder"]);
+      setPlayers((prev) => (prev.length >= 1 ? prev : [""]));
     }
   }, [gameType]);
+
+  const addCenturyPlayer = () => {
+    if (players.length < 10) {
+      setPlayers([...players, ""]);
+    }
+  };
+
+  const removeCenturyPlayer = (index: number) => {
+    if (players.length > 1) {
+      setPlayers(players.filter((_, i) => i !== index));
+    }
+  };
 
   // Compute default rate when table or ball count changes
   const activeTable = tables.find((t) => t.id === tableId);
@@ -96,16 +108,34 @@ export function StartGameModal({
       return;
     }
 
-    // Filter out blank players for non-century
+    if (gameType === "double") {
+      const p1 = players[0]?.trim();
+      const p2 = players[1]?.trim();
+      const p3 = players[2]?.trim();
+      const p4 = players[3]?.trim();
+      if (!p1 || !p2 || !p3 || !p4) {
+        setError("Please provide all 4 player names for Double (2 players in Team 1 and 2 players in Team 2)");
+        return;
+      }
+    } else if (gameType === "century") {
+      const validCenturyPlayers = players.map((p) => p.trim()).filter(Boolean);
+      if (validCenturyPlayers.length === 0) {
+        setError("Please enter at least 1 player name for Century");
+        return;
+      }
+    } else {
+      const p1 = players[0]?.trim();
+      const p2 = players[1]?.trim();
+      if (!p1 || !p2) {
+        setError("Please provide both player names for Single match");
+        return;
+      }
+    }
+
     const validPlayers =
       gameType === "century"
-        ? [players[0] || "Solo Break Builder"]
+        ? players.map((p) => p.trim()).filter(Boolean)
         : players.map((p) => p.trim()).filter(Boolean);
-
-    if (gameType !== "century" && validPlayers.length < (gameType === "double" ? 4 : 2)) {
-      setError(`Please provide all player names for a ${gameType} match`);
-      return;
-    }
 
     setLoading(true);
     try {
@@ -254,26 +284,137 @@ export function StartGameModal({
 
           {/* Player Names Input */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 flex items-center justify-between">
-              <span>Players</span>
-              <span className="text-[10px] lowercase text-emerald-400">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 {gameType === "double"
-                  ? "4 Players"
+                  ? "Teams & Players"
                   : gameType === "century"
-                  ? "Solo Break / Practice"
-                  : "2 Players"}
+                  ? "Century Players"
+                  : "Players"}
+              </label>
+              <span className="text-[10px] text-amber-400 font-medium">
+                {gameType === "double"
+                  ? "2 Players per Team (4 Total)"
+                  : gameType === "century"
+                  ? `${players.length}/10 Players`
+                  : "Player 1 vs Player 2"}
               </span>
-            </label>
+            </div>
 
-            {gameType === "century" ? (
-              <input
-                type="text"
-                value={players[0] || ""}
-                onChange={(e) => handlePlayerChange(0, e.target.value)}
-                placeholder="Player name (optional, defaults to Solo)"
-                className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] px-3 py-2 text-xs text-white focus:border-amber-500 focus:outline-none"
-              />
+            {gameType === "double" ? (
+              /* Double: Team 1 & Team 2 */
+              <div className="space-y-3">
+                {/* Team 1 */}
+                <div className="rounded-xl border border-emerald-800/70 bg-[#0d2217] p-3 shadow-inner">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-2">
+                    <Shield className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>TEAM 1</span>
+                    <span className="text-[10px] text-gray-400 font-normal ml-auto">Players 1 & 2</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-2 text-[10px] font-bold text-emerald-500">T1-P1</span>
+                      <input
+                        type="text"
+                        value={players[0] || ""}
+                        onChange={(e) => handlePlayerChange(0, e.target.value)}
+                        placeholder="Player 1 Name"
+                        className="w-full rounded-lg border border-emerald-900 bg-[#08150f] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-2 text-[10px] font-bold text-emerald-500">T1-P2</span>
+                      <input
+                        type="text"
+                        value={players[1] || ""}
+                        onChange={(e) => handlePlayerChange(1, e.target.value)}
+                        placeholder="Player 2 Name"
+                        className="w-full rounded-lg border border-emerald-900 bg-[#08150f] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center my-0.5">
+                  <span className="rounded-full bg-[#13271c] border border-amber-500/40 px-3 py-0.5 text-[10px] font-bold text-amber-400 tracking-wider uppercase">
+                    VS
+                  </span>
+                </div>
+
+                {/* Team 2 */}
+                <div className="rounded-xl border border-amber-800/60 bg-[#1c1a0e] p-3 shadow-inner">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300 mb-2">
+                    <Shield className="h-3.5 w-3.5 text-amber-400" />
+                    <span>TEAM 2</span>
+                    <span className="text-[10px] text-gray-400 font-normal ml-auto">Players 3 & 4</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-2 text-[10px] font-bold text-amber-500">T2-P1</span>
+                      <input
+                        type="text"
+                        value={players[2] || ""}
+                        onChange={(e) => handlePlayerChange(2, e.target.value)}
+                        placeholder="Player 3 Name"
+                        className="w-full rounded-lg border border-amber-950 bg-[#100f07] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-2 text-[10px] font-bold text-amber-500">T2-P2</span>
+                      <input
+                        type="text"
+                        value={players[3] || ""}
+                        onChange={(e) => handlePlayerChange(3, e.target.value)}
+                        placeholder="Player 4 Name"
+                        className="w-full rounded-lg border border-amber-950 bg-[#100f07] pl-12 pr-3 py-1.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : gameType === "century" ? (
+              /* Century: Dynamic up to 10 players */
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                  {players.map((playerName, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 relative">
+                      <span className="absolute left-2.5 top-2 text-[10px] font-bold text-gray-500">
+                        #{idx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={playerName}
+                        onChange={(e) => handlePlayerChange(idx, e.target.value)}
+                        placeholder={`Player ${idx + 1} Name`}
+                        className="w-full rounded-xl border border-[#1b3a2a] bg-[#0d1e15] pl-8 pr-8 py-2 text-xs text-white focus:border-amber-500 focus:outline-none"
+                      />
+                      {players.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeCenturyPlayer(idx)}
+                          className="absolute right-2 p-1 text-gray-500 hover:text-rose-400 transition-colors"
+                          title="Remove player"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {players.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={addCenturyPlayer}
+                    className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-emerald-700/60 bg-emerald-950/20 hover:bg-emerald-950/40 py-2 text-xs font-semibold text-emerald-300 transition-all cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Add Player ({players.length}/10)</span>
+                  </button>
+                )}
+              </div>
             ) : (
+              /* Single / Final (2 Players) */
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {players.map((playerName, idx) => (
                   <div key={idx} className="relative">

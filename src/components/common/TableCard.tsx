@@ -140,12 +140,37 @@ export function TableCard({
             </div>
 
             {/* Players List */}
-            <div className="flex items-center gap-2 text-xs">
-              <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-              <div className="truncate font-medium text-emerald-200">
-                {liveGame.players.join("  vs  ")}
+            {liveGame.type === "double" && liveGame.players.length >= 4 ? (
+              <div className="rounded-lg bg-[#0a1b12] p-2.5 border border-emerald-900/60 text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Team 1:</span>
+                  <span className="font-semibold text-white">{liveGame.players[0]} & {liveGame.players[1]}</span>
+                </div>
+                <div className="flex items-center justify-center text-[10px] text-amber-400 font-bold uppercase tracking-widest">
+                  — vs —
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Team 2:</span>
+                  <span className="font-semibold text-white">{liveGame.players[2]} & {liveGame.players[3]}</span>
+                </div>
               </div>
-            </div>
+            ) : liveGame.type === "century" ? (
+              <div className="flex items-center gap-2 text-xs">
+                <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <div className="truncate font-medium text-emerald-200">
+                  {liveGame.players.length > 1
+                    ? `${liveGame.players.join(", ")} (${liveGame.players.length} Players)`
+                    : liveGame.players[0] || "Solo Break Builder"}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs">
+                <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <div className="truncate font-medium text-emerald-200">
+                  {liveGame.players.join("  vs  ")}
+                </div>
+              </div>
+            )}
 
             {liveGame.notes && (
               <p className="text-[11px] italic text-gray-400 line-clamp-1 border-t border-emerald-950/60 pt-1.5">
