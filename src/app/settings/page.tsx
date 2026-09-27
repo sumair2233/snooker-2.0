@@ -188,7 +188,7 @@ export default function SettingsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-950 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-950 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
                   <span>{saving ? "Saving Changes..." : "Save Club Settings"}</span>
@@ -196,6 +196,32 @@ export default function SettingsPage() {
               </div>
             )}
           </form>
+        </div>
+
+        {/* Database Initialization & Migration Tool */}
+        <div className="mt-6 rounded-2xl border border-emerald-900/40 bg-[#0a1811] p-6 shadow-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-emerald-400 text-lg">🗄️</span>
+            <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+              PostgreSQL Database Auto-Setup
+            </h2>
+          </div>
+          <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+            Initialize all database tables, foreign keys, JSONB columns, and query indices automatically without needing to paste statements into a SQL console.
+          </p>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a
+              href="/api/setup-db"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 px-4 py-2.5 text-xs font-semibold text-emerald-300 transition-all cursor-pointer"
+            >
+              <span>🚀 Run 1-Click DB Setup (`/api/setup-db`)</span>
+            </a>
+            <span className="text-[11px] text-gray-500">
+              Executes each table statement individually to avoid prepared statement limits.
+            </span>
+          </div>
         </div>
       </div>
     </AppShell>

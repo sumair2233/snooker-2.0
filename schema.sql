@@ -1,4 +1,17 @@
--- Snooker Club Management System - Vercel Postgres / PostgreSQL Schema
+-- ============================================================================
+-- SNOOKER CLUB MANAGEMENT SYSTEM - POSTGRESQL SCHEMA
+-- ============================================================================
+-- NOTE FOR VERCEL POSTGRES / NEON / SUPABASE WEB CONSOLES:
+-- If you see: "cannot insert multiple commands into a prepared statement",
+-- web SQL consoles execute queries as prepared statements which only accept
+-- ONE statement at a time.
+--
+-- HOW TO INITIALIZE:
+-- 1. Easiest: Open `/api/setup-db` in your browser (e.g. https://your-site.vercel.app/api/setup-db)
+--    or click "Run 1-Click DB Setup" in the app's Settings page.
+-- 2. Via CLI: psql "$POSTGRES_URL" -f schema.sql
+-- 3. Web Editor: Copy/paste and run each CREATE TABLE block one at a time.
+-- ============================================================================
 
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(64) PRIMARY KEY,
