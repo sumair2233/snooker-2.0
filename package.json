@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup": "node --env-file=.env.local scripts/setup-db.js",
+    "db:seed": "node --env-file=.env.local scripts/seed-neon.js"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
