@@ -27,19 +27,39 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/dowloads', express.static(path.join(__dirname, 'public')));
 
-// Date & Time Helpers
-function todayStr() {
-  const n = new Date();
-  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+// Date & Time Helpers (defaulting to club timezone Asia/Karachi to avoid UTC serverless skew)
+function todayStr(tz = 'Asia/Karachi') {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
+  } catch {
+    const n = new Date();
+    return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+  }
 }
-function nowTime() {
-  const n = new Date();
-  return `${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}`;
+function nowTime(tz = 'Asia/Karachi') {
+  try {
+    return new Date().toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
+  } catch {
+    const n = new Date();
+    return `${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}`;
+  }
 }
-function nowDateTime() {
-  const n = new Date();
-  const p = v => String(v).padStart(2, '0');
-  return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+function nowDateTime(tz = 'Asia/Karachi') {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    }).formatToParts(new Date());
+    const m = {};
+    parts.forEach(p => { m[p.type] = p.value; });
+    return `${m.year}-${m.month}-${m.day} ${m.hour}:${m.minute}:${m.second}`;
+  } catch {
+    const n = new Date();
+    const p = v => String(v).padStart(2, '0');
+    return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+  }
 }
 
 // Auth Middleware
@@ -374,7 +394,7 @@ app.post('/api/games/start', requireAuth, async (req, res) => {
     await db.execute("UPDATE games SET status = 'cancelled' WHERE table_id = ? AND status = 'active'", [b.table_id]);
 
     const sTime = b.start_time || nowTime();
-    const sDate = b.start_date || todayStr();
+    const sDate = b.date || b.start_date || todayStr();
     const empId = req.session.user?.id || 161;
     const empName = req.session.user?.full_name || 'emp786';
 

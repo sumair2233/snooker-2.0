@@ -1519,7 +1519,7 @@
         ${styleImg(t)}
         <div class="t-num">${t.name}</div>
         <div class="t-name">${players}</div>
-        <div class="t-time">${typeBadge(g.game_type)} · ${fmtTime12(g.start_time)} · ${fmtDuration(mins)}</div>
+        <div class="t-time">${typeBadge(g.game_type)} · ${fmtTime12(g.start_time)} · <span class="game-duration" data-start="${g.start_time}" data-date="${g.date}">${fmtDuration(mins)}</span></div>
         <div class="t-amount" data-start="${g.start_time}" data-date="${g.date}" data-rate="${t.rate_min || 3}" data-rate-hour="${t.rate_hour || 0}" data-snooker-rate-min="${t.snooker_rate_min || 0}" data-snooker-rate-hour="${t.snooker_rate_hour || 0}" data-rate-type="${g.century_rate_type || 'min'}" data-type="${g.game_type}" data-billing="${g.billing_type || ''}" data-tokens="${g.token_count || 1}" data-rate-token="${t.rate_token || 0}" data-rate-30="${t.rate_30min || 0}" data-rate-game="${t.rate_game || 0}" data-extra="${Number(g.extra_charges || 0)}" data-fixed="${fixedAmt}">Rs. ${est}</div>
         <div style="margin-top:4px"><span class="badge badge-green">▶ Live</span></div>
         <div class="table-actions">
@@ -1795,7 +1795,7 @@
       const ball_type = (game_type === 'century' || isArcadeTable() || timedSnooker) ? null : (selectedRate || null);
       const century_mode = game_type === 'century' ? centuryMode : null;
       const century_rate_type = game_type === 'century' ? (document.getElementById('sg-century-rate-type')?.value || 'min') : null;
-      const body = { table_id, game_type, player1, player2, player3, player4, date, start_time, ball_type, century_mode, century_rate_type, team1_players, team2_players };
+      const body = { table_id, game_type, player1, player2, player3, player4, date, start_date: date, start_time, ball_type, century_mode, century_rate_type, team1_players, team2_players };
       body.extra_charge_count = Number(document.getElementById('sg-extra-charge-count')?.textContent || 0);
       body.extraChargeCount = body.extra_charge_count;
       body.extra_charge_quantity = body.extra_charge_count;
@@ -2188,6 +2188,7 @@
         player3: g.player3,
         player4: g.player4,
         date: todayStr(),
+        start_date: todayStr(),
         start_time: nowTime(),
         ball_type: opts.ball_type !== undefined ? opts.ball_type : g.ball_type,
         century_mode: g.century_mode,

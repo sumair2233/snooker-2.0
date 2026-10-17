@@ -906,7 +906,7 @@ async function loadAdminBoard(target='admin-board'){
         ${styleImg(t)}
         <div class="t-num">${t.name}</div>
         <div class="t-name">${pl}</div>
-        <div class="t-time">${typeBadge(g.game_type)} · ${fmtTime12(g.start_time)} · ${fmtDuration(mins)}</div>
+        <div class="t-time">${typeBadge(g.game_type)} · ${fmtTime12(g.start_time)} · <span class="game-duration" data-start="${g.start_time}" data-date="${g.date}">${fmtDuration(mins)}</span></div>
         <div class="t-amount" data-start="${g.start_time}" data-date="${g.date}" data-rate="${t.rate_min||3}" data-rate-hour="${t.rate_hour||0}" data-rate-type="${g.century_rate_type||'min'}" data-type="${g.game_type}" data-billing="${g.billing_type||''}" data-tokens="${g.token_count||1}" data-rate-token="${t.rate_token||0}" data-rate-30="${t.rate_30min||0}" data-rate-game="${t.rate_game||0}" data-fixed="${fixedAmt}">Rs. ${est}</div>
         <div style="margin-top:4px"><span class="badge badge-green">▶ Live</span></div>
         <div class="text-xs text-muted" style="margin-top:3px">By: ${g.employee_name}</div>

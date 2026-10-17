@@ -148,7 +148,10 @@ function fmtDateTime(s) {
 function calcDuration(start,end) {
   if (!start||!end) return null;
   const [sh,sm]=start.split(':').map(Number), [eh,em]=end.split(':').map(Number);
-  let m=(eh*60+em)-(sh*60+sm); if(m<0)m+=1440; return m;
+  let m=(eh*60+em)-(sh*60+sm);
+  if (m < 0 && m >= -2) return 0;
+  if(m<0)m+=1440;
+  return m;
 }
 function fmtDuration(mins) {
   if (mins===null||mins===undefined) return '—';
@@ -156,10 +159,16 @@ function fmtDuration(mins) {
   return h>0?`${h}h ${m}m`:`${m}m`;
 }
 function runningMins(startTime, startDate) {
-  const now=new Date();
-  const base=new Date(`${startDate||todayStr()}T${startTime}`);
-  let diff=Math.floor((now-base)/60000);
-  if(diff<0)diff+=1440; return diff;
+  if (!startTime) return 0;
+  const now = new Date();
+  const timeOnly = startTime.slice(0, 5);
+  const dateOnly = (startDate || todayStr()).slice(0, 10);
+  const base = new Date(`${dateOnly}T${timeOnly}:00`);
+  let diff = Math.floor((now - base) / 60000);
+  if (diff < 0 && diff >= -5) return 0;
+  if (diff >= 1435 && diff <= 1445) diff -= 1440;
+  if (diff < 0) diff += 1440;
+  return Math.max(0, diff);
 }
 function addDays(dateStr,n) {
   const d=new Date(dateStr); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10);
