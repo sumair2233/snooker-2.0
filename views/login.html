@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CueZone — Sign in</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --baize: #123524;
+      --deep: #08170f;
+      --panel: #0c1f15;
+      --brass: #d4a94e;
+      --brass-d: #b58b33;
+      --chalk: #efe8d8;
+      --mute: #9fafa0;
+      --line: rgba(239, 232, 216, .12);
+      --red: #ef6a5b;
+      --ok: #4fd18b
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--deep);
+      color: var(--chalk);
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 2px
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer
+    }
+
+    /* ---- Left: the table ---- */
+    .stage {
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(120% 90% at 30% 20%, #1b4a33 0%, var(--baize) 45%, #0a2016 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 3rem
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(45deg, rgba(255, 255, 255, .012) 0 2px, transparent 2px 4px);
+      pointer-events: none
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      position: relative;
+      z-index: 1
+    }
+
+    .logo i {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--deep);
+      border: 2px solid var(--brass);
+      display: grid;
+      place-items: center;
+      font-style: normal;
+      font-size: 1.1rem
+    }
+
+    .logo b {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem;
+      letter-spacing: 3px;
+      color: var(--brass);
+      font-weight: 400
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1
+    }
+
+    .hero h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-weight: 400;
+      font-size: clamp(2.6rem, 4.6vw, 4.4rem);
+      line-height: .98;
+      letter-spacing: 1px;
+      max-width: 11ch;
+      margin-bottom: .9rem
+    }
+
+    .hero p {
+      color: #b9c8bb;
+      max-width: 34ch;
+      line-height: 1.55;
+      font-size: .95rem
+    }
+
+    .table {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      margin: 1.5rem 0;
+      filter: drop-shadow(0 24px 40px rgba(0, 0, 0, .45))
+    }
+
+    .ball {
+      opacity: 0;
+      animation: drop .5s ease-out forwards
+    }
+
+    @keyframes drop {
+      from {
+        opacity: 0;
+        transform: translateY(-8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+      font-size: .82rem;
+      color: #b9c8bb
+    }
+
+    .stats strong {
+      display: block;
+      font-size: 1.25rem;
+      color: var(--chalk);
+      font-weight: 600
+    }
+
+    /* ---- Right: sign in ---- */
+    .pane {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: var(--panel)
+    }
+
+    .box {
+      width: 100%;
+      min-width: 0;
+      max-width: 400px
+    }
+
+    .box h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -.3px;
+      margin-bottom: .3rem
+    }
+
+    .box .lead {
+      color: #9db0a1;
+      font-size: .9rem;
+      margin-bottom: 1.5rem
+    }
+
+    .seg {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--deep);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.25rem
+    }
+
+    .seg::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      background: var(--baize);
+      border: 1px solid rgba(212, 169, 78, .45);
+      border-radius: 9px;
+      transition: transform .25s cubic-bezier(.3, .7, .2, 1)
+    }
+
+    .seg[data-role=employee]::before {
+      transform: translateX(100%)
+    }
+
+    .seg button {
+      position: relative;
+      background: none;
+      border: 0;
+      padding: .6rem;
+      font-size: .85rem;
+      font-weight: 500;
+      color: #9db0a1;
+      border-radius: 9px;
+      transition: color .2s
+    }
+
+    .seg button[aria-selected=true] {
+      color: var(--brass)
+    }
+
+    .field {
+      margin-bottom: 1rem
+    }
+
+    .field label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 500;
+      color: #c9d4cb;
+      margin-bottom: .4rem
+    }
+
+    .inp {
+      position: relative
+    }
+
+    .inp svg.lead-i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      stroke: #7d9082;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round
+    }
+
+    .inp input {
+      width: 100%;
+      height: 46px;
+      background: var(--deep);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 44px 0 40px;
+      color: var(--chalk);
+      font: inherit;
+      font-size: .92rem;
+      transition: border-color .2s, box-shadow .2s
+    }
+
+    .inp input::placeholder {
+      color: #5f7366
+    }
+
+    .inp input:focus {
+      outline: 0;
+      border-color: var(--brass);
+      box-shadow: 0 0 0 4px rgba(212, 169, 78, .14)
+    }
+
+    .eye {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      background: none;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #7d9082
+    }
+
+    .eye:hover {
+      color: var(--chalk)
+    }
+
+    .eye svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round
+    }
+
+    .err {
+      display: none;
+      background: rgba(239, 106, 91, .1);
+      border: 1px solid rgba(239, 106, 91, .4);
+      color: #ffb3a9;
+      border-radius: 10px;
+      padding: .65rem .8rem;
+      font-size: .82rem;
+      margin-bottom: 1rem
+    }
+
+    .go {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--brass);
+      color: #1a1405;
+      font-weight: 600;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .6rem;
+      transition: background .2s, transform .1s
+    }
+
+    .go:hover {
+      background: #e0b85c
+    }
+
+    .go:active {
+      transform: scale(.985)
+    }
+
+    .go:disabled {
+      opacity: .7;
+      cursor: wait
+    }
+
+    .downloads {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .7rem;
+      margin-top: 1rem;
+      min-width: 0
+    }
+
+    .dl {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .7rem .8rem;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--chalk);
+      background: linear-gradient(180deg, rgba(212, 169, 78, .12), rgba(212, 169, 78, .04));
+      border: 1px solid rgba(212, 169, 78, .35);
+      transition: border-color .2s, background .2s, transform .15s, box-shadow .2s
+    }
+
+    .dl:hover {
+      border-color: var(--brass);
+      transform: translateY(-2px);
+      background: linear-gradient(180deg, rgba(212, 169, 78, .2), rgba(212, 169, 78, .07));
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .35)
+    }
+
+    .dl:active {
+      transform: translateY(0) scale(.99)
+    }
+
+    .dl-ico {
+      flex: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--deep);
+      border: 1px solid rgba(212, 169, 78, .4);
+      color: var(--brass)
+    }
+
+    .dl-ico svg {
+      width: 20px;
+      height: 20px
+    }
+
+    .dl-txt {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+      line-height: 1.25
+    }
+
+    .dl-txt strong {
+      font-size: .86rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .dl-txt small {
+      font-size: .7rem;
+      color: var(--mute);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .dl-go {
+      margin-left: auto;
+      flex: none;
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: var(--brass);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform .2s
+    }
+
+    .dl:hover .dl-go {
+      transform: translateY(2px)
+    }
+
+    .spin {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(26, 20, 5, .3);
+      border-top-color: #1a1405;
+      border-radius: 50%;
+      animation: sp .7s linear infinite;
+      display: none
+    }
+
+    .go.busy .spin {
+      display: block
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* ---- Demo ---- */
+    .demo {
+      margin-top: 1.6rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .015)
+    }
+
+    .demo>h3 {
+      font-size: .84rem;
+      font-weight: 600;
+      padding: .8rem 1rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .demo>h3 span {
+      font-weight: 400;
+      color: #8ea192;
+      font-size: .76rem
+    }
+
+    .acct {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: .2rem .8rem;
+      align-items: center;
+      padding: .8rem 1rem
+    }
+
+    .acct+.acct {
+      border-top: 1px solid var(--line)
+    }
+
+    .av {
+      grid-row: span 2;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--baize);
+      border: 1px solid rgba(212, 169, 78, .4);
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem
+    }
+
+    .acct strong {
+      font-size: .86rem;
+      font-weight: 600
+    }
+
+    .creds {
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+      grid-column: 2
+    }
+
+    .chip {
+      background: var(--deep);
+      border: 1px solid var(--line);
+      color: #cfd9d1;
+      border-radius: 7px;
+      padding: .18rem .5rem;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: .72rem;
+      display: inline-flex;
+      gap: .35rem;
+      align-items: center;
+      transition: border-color .2s, color .2s
+    }
+
+    .chip:hover {
+      border-color: var(--brass)
+    }
+
+    .chip.ok {
+      border-color: var(--ok);
+      color: var(--ok)
+    }
+
+    .use {
+      grid-column: 3;
+      grid-row: 1/span 2;
+      background: transparent;
+      border: 1px solid var(--brass);
+      color: var(--brass);
+      border-radius: 8px;
+      padding: .45rem .8rem;
+      font-size: .78rem;
+      font-weight: 600;
+      transition: background .2s
+    }
+
+    .use:hover {
+      background: rgba(212, 169, 78, .14)
+    }
+
+    .vids {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.1rem;
+      font-size: .82rem
+    }
+
+    .vids a {
+      color: #b9c8bb;
+      text-decoration: none;
+      display: inline-flex;
+      gap: .4rem;
+      align-items: center;
+      padding: .3rem .2rem;
+      border-bottom: 1px solid transparent
+    }
+
+    .vids a:hover {
+      color: var(--brass);
+      border-color: var(--brass)
+    }
+
+    .vids svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor
+    }
+
+    .ver {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: .7rem;
+      color: #5f7366
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(1.2rem, env(safe-area-inset-bottom));
+      transform: translate(-50%, 20px);
+      background: #e9e2d0;
+      color: #10201a;
+      padding: .6rem 1rem;
+      border-radius: 10px;
+      font-size: .82rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 20;
+      max-width: 90vw
+    }
+
+    .toast.on {
+      opacity: 1;
+      transform: translate(-50%, 0)
+    }
+
+    .support-link {
+      position: fixed;
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      z-index: 10;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: 0 1.05rem 0 .8rem;
+      background: #25d366;
+      color: #fff;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: .84rem;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+      transition: background .2s, transform .2s
+    }
+
+    .support-link:hover {
+      background: #20bd5a;
+      transform: translateY(-2px)
+    }
+
+    .support-link svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor
+    }
+
+    @media(max-width:900px) {
+      body {
+        grid-template-columns: 1fr;
+        display: block
+      }
+
+      .stage {
+        padding: 1.4rem 1.5rem;
+        flex-direction: row;
+        align-items: center;
+        min-height: 0
+      }
+
+      .hero,
+      .table,
+      .stats {
+        display: none
+      }
+
+      .pane {
+        padding: 1.6rem 1.25rem 5.5rem;
+        align-items: flex-start
+      }
+    }
+
+    @media(max-width:520px) {
+      .downloads {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      .ball {
+        animation: none;
+        opacity: 1
+      }
+
+      .seg::before,
+      .toast,
+      .dl,
+      .dl-go {
+        transition: none
+      }
+
+      .dl:hover {
+        transform: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="stage" aria-hidden="true">
+    <div class="logo"><i>🎱</i><b>CueZone</b></div>
+    <div class="hero">
+      <h2>Every table, every minute, accounted for.</h2>
+      <p>Run snooker and game tables across all your branches from one screen.</p>
+    </div>
+    <svg class="table" viewBox="0 0 600 320" id="tbl">
+      <rect x="2" y="2" width="596" height="316" rx="22" fill="#3b2314" />
+      <rect x="2" y="2" width="596" height="316" rx="22" fill="none" stroke="#5a3a22" stroke-width="2" />
+      <rect x="26" y="26" width="548" height="268" rx="8" fill="#1d6b45" />
+      <rect x="26" y="26" width="548" height="268" rx="8" fill="none" stroke="#0e3a25" stroke-width="3" />
+      <line x1="170" y1="26" x2="170" y2="294" stroke="#ffffff" stroke-opacity=".35" stroke-width="1.5" />
+      <path d="M170 110 A50 50 0 0 0 170 210" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="1.5" />
+      <g fill="#050c08">
+        <circle cx="26" cy="26" r="15" />
+        <circle cx="300" cy="22" r="13" />
+        <circle cx="574" cy="26" r="15" />
+        <circle cx="26" cy="294" r="15" />
+        <circle cx="300" cy="298" r="13" />
+        <circle cx="574" cy="294" r="15" />
+      </g>
+      <g id="balls"></g>
+    </svg>
+    <div class="stats">
+      <div><strong>Live timers</strong>Per table, per session</div>
+      <!-- <div><strong>Multi-branch</strong>One login for all</div> -->
+    </div>
+  </section>
+
+  <main class="pane">
+    <div class="box">
+      <h1>Welcome back</h1>
+      <p class="lead">Sign in to manage your club.</p>
+
+      <div class="seg" id="seg" data-role="admin" role="tablist" aria-label="Account type">
+        <button type="button" role="tab" id="tab-admin" aria-selected="true" onclick="setRole('admin')">Admin</button>
+        <button type="button" role="tab" id="tab-employee" aria-selected="false"
+          onclick="setRole('employee')">Employee</button>
+      </div>
+
+      <form id="cuezone-login" method="post" action="/" autocomplete="on" onsubmit="doLogin();return false;">
+        <div class="field"><label for="u">Username</label>
+          <div class="inp">
+            <svg class="lead-i" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
+            <input type="text" id="u" name="username" placeholder="Enter your username" autocomplete="username"
+              autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()" />
+          </div>
+        </div>
+        <div class="field"><label for="p">Password</label>
+          <div class="inp">
+            <svg class="lead-i" viewBox="0 0 24 24">
+              <rect x="4" y="11" width="16" height="10" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            <input type="password" id="p" name="password" placeholder="Enter your password"
+              autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"
+              oninput="this.value=this.value.toLowerCase()" />
+            <button type="button" class="eye" onclick="togglePass(this)" aria-label="Show password">
+              <svg viewBox="0 0 24 24">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="err" id="err" role="alert"></div>
+        <button class="go btn" type="submit"><span class="spin"></span><span class="lbl">Sign in</span></button>
+      </form>
+
+      <div class="downloads" aria-label="Download CueZone apps">
+        <a class="dl" href="/dowloads/cuezone.apk" download="cuezone.apk">
+          <span class="dl-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 9h12v8a1.5 1.5 0 0 1-1.5 1.5H15V21a1.2 1.2 0 0 1-2.4 0v-2.5h-1.2V21a1.2 1.2 0 0 1-2.4 0v-2.5H7.5A1.5 1.5 0 0 1 6 17V9Zm-2.7.6a1.2 1.2 0 0 1 2.4 0v5.2a1.2 1.2 0 0 1-2.4 0V9.6Zm17.4 0v5.2a1.2 1.2 0 0 1-2.4 0V9.6a1.2 1.2 0 0 1 2.4 0ZM6.3 8a5.7 5.7 0 0 1 11.4 0H6.3Z" />
+            </svg>
+          </span>
+          <span class="dl-txt"><strong>Android app</strong><small>APK · direct download</small></span>
+          <svg class="dl-go" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+          </svg>
+        </a>
+
+        <a class="dl" href="/dowloads/CueZone%20Setup%201.0.0.exe" download="CueZone Setup 1.0.0.exe">
+          <span class="dl-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 5.5 11 4.4v7.1H3zM12 4.3 21 3v8.5h-9zM3 12.5h8v7.1L3 18.5zM12 12.5h9V21l-9-1.3z" />
+            </svg>
+          </span>
+          <span class="dl-txt"><strong>Windows app</strong><small>Desktop installer · .exe</small></span>
+          <svg class="dl-go" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+          </svg>
+        </a>
+      </div>
+
+      <section class="demo" aria-label="Demo accounts">
+        <h3>Try a demo account <span>Tap to copy</span></h3>
+        <div class="acct">
+          <div class="av">👑</div><strong>Admin demo</strong>
+          <button type="button" class="use" onclick="useDemo('admin','admindemo','admindemo')">Use</button>
+          <div class="creds">
+            <button type="button" class="chip" onclick="copyText('admindemo',this)">admindemo</button>
+            <button type="button" class="chip" onclick="copyText('admindemo',this)">admindemo</button>
+          </div>
+        </div>
+        <div class="acct">
+          <div class="av">🎮</div><strong>Employee demo</strong>
+          <button type="button" class="use" onclick="useDemo('employee','emp786','emp786')">Use</button>
+          <div class="creds">
+            <button type="button" class="chip" onclick="copyText('emp786',this)">emp786</button>
+            <button type="button" class="chip" onclick="copyText('emp786',this)">emp786</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="vids">
+        <a href="/demo-videos?category=snooker"><svg viewBox="0 0 24 24">
+            <path d="M7 4v16l13-8z" />
+          </svg>Snooker demo videos</a>
+        <a href="/demo-videos?category=games"><svg viewBox="0 0 24 24">
+            <path d="M7 4v16l13-8z" />
+          </svg>Games demo videos</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <a class="support-link" href="https://wa.me/923334571859" target="_blank" rel="noopener noreferrer"
+    title="WhatsApp 03334571859" aria-label="Chat with CueZone on WhatsApp at 03334571859">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12.04 2a9.83 9.83 0 0 0-8.42 14.91L2.3 22l5.22-1.37A9.94 9.94 0 0 0 12.04 22 10 10 0 0 0 12.04 2Zm0 18.2a8.22 8.22 0 0 1-4.19-1.14l-.3-.18-3.1.81.83-3.02-.2-.31A8.2 8.2 0 1 1 12.04 20.2Zm4.5-6.14c-.25-.13-1.48-.73-1.71-.81-.23-.09-.4-.13-.56.13-.17.25-.65.81-.8.98-.15.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.39.11-.52.11-.11.25-.29.37-.44.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.02 2.61c.13.17 1.77 2.7 4.28 3.78.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.48-.61 1.69-1.2-.21-.59-.21-1.1-.15-1.2-.06-.1-.23-.17-.48-.29Z" />
+    </svg>
+    <span>Support</span>
+  </a>
+
+  <script>
+    // racked balls on the table (decorative)
+    (function () {
+      const g = document.getElementById('balls'), R = 9.5, cols = ['#c0392b', '#c0392b', '#c0392b', '#c0392b', '#c0392b'];
+      let n = 0; const add = (x, y, c) => { const e = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); e.setAttribute('cx', x); e.setAttribute('cy', y); e.setAttribute('r', R); e.setAttribute('fill', c); e.setAttribute('class', 'ball'); e.style.animationDelay = (n++ * 45 + 200) + 'ms'; g.appendChild(e); const h = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); h.setAttribute('cx', x - 3); h.setAttribute('cy', y - 3); h.setAttribute('r', 2.4); h.setAttribute('fill', '#fff'); h.setAttribute('fill-opacity', '.45'); h.setAttribute('class', 'ball'); h.style.animationDelay = e.style.animationDelay; g.appendChild(h) };
+      const x0 = 400; for (let r = 0; r < 5; r++)for (let k = 0; k <= r; k++)add(x0 + r * 17, 160 + (k - r / 2) * 19.5, '#c0392b');
+      add(358, 160, '#f1c40f'); add(170, 160, '#7a4a1f'); add(170, 118, '#27ae60'); add(170, 202, '#d4b84a');
+      add(300, 160, '#2c6fd1'); add(500, 160, '#f2a0c0'); add(548, 160, '#111'); add(110, 160, '#f4f0e4');
+    })();
+
+    let role = 'admin';
+    function setRole(r) {
+      role = r;
+      document.getElementById('seg').dataset.role = r;
+      ['admin', 'employee'].forEach(x => document.getElementById('tab-' + x).setAttribute('aria-selected', x === r));
+      document.getElementById('err').style.display = 'none';
+    }
+    function togglePass(b) {
+      const p = document.getElementById('p'); p.type = p.type === 'password' ? 'text' : 'password';
+      b.setAttribute('aria-label', p.type === 'password' ? 'Show password' : 'Hide password');
+    }
+    let tt; function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200) }
+    function fallbackCopy(text, cb) { const t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); cb() } catch (e) { } document.body.removeChild(t) }
+    function copyText(text, el) {
+      const done = () => { el.classList.add('ok'); toast('Copied "' + text + '"'); setTimeout(() => el.classList.remove('ok'), 1200) };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done)); else fallbackCopy(text, done);
+    }
+    function useDemo(r, u, p) {
+      setRole(r); document.getElementById('u').value = u; document.getElementById('p').value = p;
+      toast((r === 'admin' ? 'Admin' : 'Employee') + ' demo filled. Press Sign in.');
+      document.querySelector('.go').focus();
+    }
+    async function doLogin() {
+      const u = document.getElementById('u').value.trim(), p = document.getElementById('p').value;
+      const btn = document.querySelector('.go'), lbl = btn.querySelector('.lbl'), err = document.getElementById('err');
+      err.style.display = 'none';
+      if (!u || !p) { err.textContent = 'Enter your username and password to continue.'; err.style.display = 'block'; return }
+      btn.disabled = true; btn.classList.add('busy'); lbl.textContent = 'Signing in…';
+      try {
+        const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p, role }) });
+        const data = await res.json();
+        if (data.ok) { window.location.href = data.role === 'admin' ? '/admin' : '/employee'; return }
+        err.textContent = data.error || 'Sign in failed. Check your details and try again.'; err.style.display = 'block';
+      } catch (e) { err.textContent = 'Can’t reach the server. Check your connection and try again.'; err.style.display = 'block' }
+      btn.disabled = false; btn.classList.remove('busy'); lbl.textContent = 'Sign in';
+    }
+  </script>
+</body>
+
+</html>

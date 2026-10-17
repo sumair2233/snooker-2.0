@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en" autocomplete="off">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CueZone — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css?v=mvcy1nbd"/>
+</head>
+<body autocomplete="off">
+<div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+<div class="app-layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img id="club-logo" class="club-logo" style="display:none" alt="Club logo"/>
+    <h1 id="brand-title">🎱 CueZone</h1>
+    <p id="club-name-lbl">Snooker Club</p>
+    <div class="role-badge" style="background:rgba(201,168,76,.2)">👑 Admin</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item active" id="nav-dash"    onclick="nav('page-dash','nav-dash')"><span class="icon">📊</span>Dashboard</a>
+    <a class="nav-item"        id="nav-board"   onclick="nav('page-board','nav-board')"><span class="icon">📺</span>Live Board</a>
+    <div class="nav-section">Records</div>
+    <a class="nav-item"        id="nav-games"   onclick="nav('page-games','nav-games')"><span class="icon">🎮</span>Today's Games</a>
+    <a class="nav-item"        id="nav-bills"   onclick="nav('page-bills','nav-bills')"><span class="icon">🧾</span>Player Bills</a>
+    <a class="nav-item"        id="nav-loans"   onclick="nav('page-loans','nav-loans')"><span class="icon">💸</span>Loans</a>
+    <a class="nav-item"        id="nav-exp"     onclick="nav('page-exp','nav-exp')"><span class="icon">💰</span>Expenses</a>
+    <a class="nav-item"        id="nav-clears"  onclick="nav('page-clears','nav-clears')"><span class="icon">📈</span>Revenue</a>
+    <div class="nav-section">Café</div>
+    <a class="nav-item"        id="nav-cafe"    onclick="nav('page-cafe','nav-cafe')"><span class="icon">☕</span>Café Inventory</a>
+    <a class="nav-item"        id="nav-caferep" onclick="nav('page-caferep','nav-caferep')"><span class="icon">📦</span>Café Reports</a>
+    <div class="nav-section">Management</div>
+    <a class="nav-item"        id="nav-emps"    onclick="nav('page-emps','nav-emps')"><span class="icon">👥</span>Employees</a>
+    <a class="nav-item"        id="nav-tables"  onclick="nav('page-tables','nav-tables')"><span class="icon">🎱</span>Games</a>
+    <a class="nav-item"        id="nav-void"    onclick="nav('page-void','nav-void')">
+      <span class="icon">🚫</span>Void Requests
+      <span class="nav-badge-count" id="void-count" style="display:none">0</span>
+    </a>
+    <div class="nav-section">Reports</div>
+    <a class="nav-item"        id="nav-reports" onclick="nav('page-reports','nav-reports')"><span class="icon">📈</span>Reports</a>
+    <a class="nav-item"        id="nav-audit"   onclick="nav('page-audit','nav-audit')"><span class="icon">🔍</span>Audit Log</a>
+    <div class="nav-section">Help</div>
+    <div id="nav-videos-slot">
+    <a class="nav-item"        id="nav-videos"  href="/demo-videos" target="_blank"><span class="icon">🎬</span>Demo Videos</a>
+    </div>
+    <div class="nav-section">System</div>
+    <a class="nav-item"        id="nav-settings"onclick="nav('page-settings','nav-settings')"><span class="icon">⚙️</span>Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="user-avatar">A</div>
+      <div><div class="user-name" id="user-name">Admin</div><div class="user-role">Administrator</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main-area">
+  <div id="license-bar" style="display:none"></div>
+  <div class="topbar">
+    <div class="flex gap-2" style="align-items:center">
+      <button class="sidebar-toggle" onclick="openSidebar()">☰</button>
+      <span class="page-title" id="page-title">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <span class="live-clock" id="live-clock"></span>
+      <button class="btn-topbar" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dash">
+      <div class="filter-bar" style="margin-bottom:.75rem">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="dash-date" style="width:160px" onchange="loadDashboard()"/></div>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="shiftDash(-1)">◀ Prev</button>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="jumpToday()">Clear Filters</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="shiftDash(1)">Next ▶</button>
+        <span class="text-gold fw-600" id="dash-date-lbl" style="margin-left:auto;align-self:center;font-size:.92rem"></span>
+      </div>
+      <div class="kpi-grid" id="dash-kpi"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div class="card"><div class="card-title mb-2">📊 Revenue by Game</div><div class="bar-chart" id="chart-table"></div><div class="flex" style="gap:4px;margin-top:4px" id="chart-table-lbl"></div></div>
+        <div class="card"><div class="card-title mb-2">⏱ Games by Hour</div><div class="bar-chart" id="chart-hour"></div><div class="flex" style="gap:4px;margin-top:4px" id="chart-hour-lbl"></div></div>
+        <div class="card">
+          <div class="card-title mb-2">🏆 Top Players</div><div id="top-players"></div>
+          <div class="divider"></div>
+          <div class="card-title mb-2">👤 By Employee</div><div id="emp-stats"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div class="card">
+          <div class="card-title mb-2">🧾 Pending Player Bills</div>
+          <div id="dash-bills"></div>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">☕ Café Summary</div>
+          <div id="dash-cafe"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🗒 Game Entries</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportDashGames()">⬇ Export Excel</button>
+        </div>
+        <div class="table-wrap" id="dash-games"></div>
+      </div>
+    </div>
+
+    <!-- LIVE BOARD -->
+    <div class="page" id="page-board">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📺 Live Game Status</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadAdminBoard()">⟳ Refresh</button>
+        </div>
+        <div class="table-board" id="admin-board"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 Quick Stats</div>
+        </div>
+        <div class="kpi-grid" id="admin-board-kpi" style="margin:.75rem"></div>
+      </div>
+    </div>
+
+    <!-- GAMES -->
+    <div class="page" id="page-games">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">From</label><input type="date" class="form-control" id="gf-from" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">To</label><input type="date" class="form-control" id="gf-to" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">Game</label><select class="form-select" id="gf-table" style="width:125px"><option value="">All Games</option></select></div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="gf-type" style="width:115px">
+            <option value="">All Types</option><option value="single">Single</option><option value="double">Double</option><option value="century">Century</option><option value="final">Final</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Employee</label><select class="form-select" id="gf-emp" style="width:135px"><option value="">All</option></select></div>
+        <div class="form-group"><label class="form-label">Payment</label>
+          <select class="form-select" id="gf-pay" style="width:110px">
+            <option value="">All</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="loan">Loan</option><option value="partial">Partial</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Player</label><input type="text" class="form-control" id="gf-player" style="width:125px" placeholder="Search…"/></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadGames()">Search</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="exportFilteredGames()">⬇ Excel</button>
+      </div>
+      <div class="kpi-grid" id="games-kpi"></div>
+      <div class="card"><div class="table-wrap" id="games-table"></div></div>
+    </div>
+
+    <!-- PLAYER BILLS (admin) -->
+    <div class="page" id="page-bills">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="fb-date" style="width:150px"/></div>
+        <div class="form-group"><label class="form-label">Player</label><input type="text" class="form-control" id="fb-player" placeholder="Search name" style="width:170px" autocomplete="off"/></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="fb-status" style="width:130px"><option value="">All</option><option value="pending">Pending</option><option value="paid">Paid</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Game</label>
+          <select class="form-select" id="fb-table" style="width:160px"><option value="">All games</option></select>
+        </div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadBills(1)">Search</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="document.getElementById('fb-date').value='';document.getElementById('fb-player').value='';document.getElementById('fb-status').value='';document.getElementById('fb-table').value='';loadBills()">Clear Filters</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧾 Player Pending Bills</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadBills(1)">⟳ Refresh</button>
+        </div>
+        <div class="kpi-grid" id="bills-kpi"></div>
+        <div class="table-wrap" id="bills-table"></div>
+      </div>
+    </div>
+
+    <!-- LOANS -->
+    <div class="page" id="page-loans">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">From</label><input type="date" class="form-control" id="lf-from" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">To</label><input type="date" class="form-control" id="lf-to" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="lf-status" style="width:115px">
+            <option value="">All</option><option value="unpaid">Unpaid</option><option value="partial">Partial</option><option value="paid">Paid</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Customer</label><input type="text" class="form-control" id="lf-cust" style="width:130px" placeholder="Search…"/></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadAdminLoans()">Search</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="window.open('/api/reports/export/loans')">⬇ Excel</button>
+      </div>
+      <div class="kpi-grid" id="loans-kpi"></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🚨 Outstanding Per Person</div></div>
+        <div class="table-wrap" id="loans-person"></div>
+      </div>
+      <div class="card"><div class="card-title mb-2">All Transactions</div><div class="table-wrap" id="loans-table"></div></div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div class="page" id="page-exp">
+      <div class="exp-add-layout">
+        <div class="card">
+          <div class="card-title mb-2">➕ Add Admin Expense</div>
+          <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="ae-date"/></div>
+          <div class="form-group"><label class="form-label">Category</label>
+            <select class="form-select" id="ae-cat">
+              <option>Rent</option>
+              <option>Bills payment</option>
+              <option>Staff salary Morning</option>
+              <option>Staff salary Evening</option>
+              <option>Club Maintanance</option>
+              <option>Table Maintenance</option>
+              <option>Club Ranuvations</option>
+              <option>Electricity Work</option>
+              <option>Other Expenses</option>
+         
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><input type="text" class="form-control" id="ae-desc" placeholder="Optional"/></div>
+          <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" class="form-control" id="ae-amount" placeholder="0" min="0"/></div>
+          <button class="btn btn-primary btn-full" onclick="addAdminExpense()">Save Expense</button>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">💰 Admin Expenses</div>
+          <div class="table-wrap" id="admin-exp-table"></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">From</label><input type="date" class="form-control" id="ef-from" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">To</label><input type="date" class="form-control" id="ef-to" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select class="form-select" id="ef-cat" style="width:145px">
+            <option value="">All</option>
+            <option>Rent</option>
+            <option>Bills payment</option>
+            <option>Staff salary Morning</option>
+            <option>Staff salary Evening</option>
+            <option>Club Maintanance</option>
+            <option>Table Maintenance</option>
+            <option>Club Ranuvations</option>
+            <option>Electricity Work</option>
+            <option>Other Expenses</option>
+            <option>Tea / Snacks</option>
+            <option>Maintenance</option>
+            <option>Staff Salary</option>
+            <option>Electricity</option>
+            <option>Table Repair</option>
+            <option>Miscellaneous</option>
+          </select></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadExpenses()">Search</button>
+      </div>
+      <div class="kpi-grid" id="exp-kpi"></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🧾 Staff Expenses</div></div>
+        <div class="table-wrap" id="exp-table"></div>
+      </div>
+    </div>
+
+    <!-- BOARD CLEARS -->
+    <div class="page" id="page-clears">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">From</label><input type="date" class="form-control" id="bc-from" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">To</label><input type="date" class="form-control" id="bc-to" style="width:145px"/></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadBoardClears()">Search</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="document.getElementById('bc-from').value='';document.getElementById('bc-to').value='';loadBoardClears()">Clear Filters</button>
+      </div>
+      <div class="kpi-grid" id="clears-kpi"></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">📈 Revenue</div></div>
+        <div class="table-wrap" id="clears-table"></div>
+      </div>
+    </div>
+
+    <!-- CAFÉ INVENTORY -->
+    <div class="page" id="page-cafe">
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:1rem">
+        <div class="card">
+          <div class="card-title mb-2">➕ Add Item</div>
+          <div class="form-group"><label class="form-label">Item Name</label><input type="text" class="form-control" id="ci-name" placeholder="e.g. Tea" autocapitalize="off"/></div>
+          <div class="form-group"><label class="form-label">Category</label><select class="form-select" id="ci-cat"></select></div>
+          <div class="form-row col-2">
+            <div class="form-group"><label class="form-label">Sale Price (Rs.)</label><input type="number" class="form-control" id="ci-price" min="0" placeholder="0"/></div>
+            <div class="form-group"><label class="form-label">Purchase Price (Rs.)</label><input type="number" class="form-control" id="ci-cost" min="0" placeholder="0"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Initial Stock</label><input type="number" class="form-control" id="ci-stock" min="0" placeholder="0"/></div>
+          <button class="btn btn-primary btn-full" onclick="addCafeItem()">Add Item</button>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">☕ Inventory List</div>
+          <div class="form-group" style="margin-bottom:.75rem">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control" id="ci-search" placeholder="Search by name or category…" autocomplete="off" oninput="renderCafeInventory()"/>
+          </div>
+          <div class="table-wrap" id="cafe-inv-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAFÉ REPORTS -->
+    <div class="page" id="page-caferep">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="crf-date" style="width:145px"/></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadCafeReport()">View</button>
+        <button class="btn btn-ghost btn-sm" style="align-self:flex-end" onclick="document.getElementById('crf-date').value=todayStr();loadCafeReport()">Clear Filters</button>
+      </div>
+      <div class="kpi-grid" id="cafe-kpi"></div>
+      <div class="card"><div class="card-title mb-2">Sales by Item</div><div class="table-wrap" id="cafe-stock-table"></div></div>
+      <div class="card"><div class="card-title mb-2">All Orders</div><div class="table-wrap" id="cafe-orders-table"></div></div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="page" id="page-emps">
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:1rem">
+        <div class="card">
+          <div class="card-title mb-2">➕ Add Employee</div>
+          <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-control" id="ne-fname"/></div>
+          <div class="form-group"><label class="form-label">Username</label><input type="text" class="form-control" id="ne-uname" name="staff_code" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/></div>
+          <div class="form-group"><label class="form-label">Password</label><div class="pw-wrap"><input type="text" class="form-control pw-mask" autocomplete="new-password" id="ne-pass" placeholder="Min 4 chars" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/><button type="button" class="pw-eye" onclick="togglePwField(this)">👁️</button></div></div>
+          <div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-control" id="ne-phone" placeholder="Optional"/></div>
+          <div class="form-group"><label class="form-label">Role</label>
+            <select class="form-select" id="ne-role"><option value="employee">Employee</option><option value="admin">Admin</option></select></div>
+          <button class="btn btn-primary btn-full" onclick="addEmployee()">Create Employee</button>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title mb-2">👥 Employee List</div>
+            <label class="text-xs text-muted" style="display:flex;align-items:center;gap:.35rem;cursor:pointer">
+              <input type="checkbox" id="emp-show-inactive" onchange="loadEmployees()" style="width:auto"/> Show deleted/inactive
+            </label>
+          </div>
+          <div id="emp-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLES -->
+    <div class="page" id="page-tables">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎱 Game Configuration</div>
+          <div class="text-muted text-sm" style="margin-top:.25rem">Note: Only Super Admin can create new games. You can modify game pricing below.</div>
+        </div>
+        <div id="tables-list"></div>
+      </div>
+    </div>
+
+    <!-- VOID REQUESTS -->
+    <div class="page" id="page-void">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🚫 Pending Void Requests</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadVoidRequests()">⟳ Refresh</button>
+        </div>
+        <div id="void-table"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="card mb-2">
+        <div class="card-title mb-2">📅 Last 7 Days Summary</div>
+        <div class="table-wrap" id="weekly-table"></div>
+      </div>
+      <div class="card">
+        <div class="card-title mb-2">📆 Monthly Summary (Last 12 Months)</div>
+        <div class="table-wrap" id="monthly-table"></div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div class="page" id="page-audit">
+      <div class="filter-bar">
+        <div class="form-group"><label class="form-label">From</label><input type="date" class="form-control" id="af-from" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">To</label><input type="date" class="form-control" id="af-to" style="width:145px"/></div>
+        <div class="form-group"><label class="form-label">User</label><select class="form-select" id="af-user" style="width:140px"><option value="">All</option></select></div>
+        <button class="btn btn-primary btn-sm" style="align-self:flex-end" onclick="loadAudit()">Search</button>
+      </div>
+      <div class="card"><div class="table-wrap" id="audit-table"></div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;max-width:960px">
+        <div class="card">
+          <div class="card-title mb-2">🏢 Club Settings</div>
+          <div class="form-group"><label class="form-label">Club Name</label><input type="text" class="form-control" id="s-name"/></div>
+          <div class="form-group"><label class="form-label">Currency Symbol</label><input type="text" class="form-control" id="s-cur"/></div>
+          <div class="form-group"><label class="form-label">Default Game Rate (Rs.)</label><input type="number" class="form-control" id="s-rate"/></div>
+          <div class="form-group"><label class="form-label">Century Rate/min (Rs.)</label><input type="number" class="form-control" id="s-crate"/></div>
+          <div class="form-group"><label class="form-label">Thermal Printer Paper Size</label><select class="form-select" id="s-print-paper-size"><option value="58mm">58mm (small thermal)</option><option value="76mm">76mm (3-inch thermal)</option><option value="80mm">80mm (wide thermal)</option><option value="112mm">112mm (4-inch thermal)</option></select></div>
+          <div class="form-group"><label class="form-label">ESP32 IP Address</label><input type="text" class="form-control" id="s-esp32-ip" placeholder="192.168.1.50"/></div>
+          <div class="form-group"><label class="form-label">ESP32 URL / mDNS</label><input type="text" class="form-control" id="s-esp32-url" placeholder="http://cuezone-esp32.local"/></div>
+          <div class="form-group">
+            <label class="form-label">ESP32 API Key</label>
+            <div style="display:flex;gap:.4rem">
+              <input type="text" class="form-control" id="s-esp32-key" placeholder="ESP32 relay API key" autocomplete="off"/>
+              <button type="button" class="btn btn-ghost" onclick="copyEsp32Key()">Copy</button>
+            </div>
+            <div class="text-muted text-xs mt-1">Copy this key into API_KEY in cuezone_cloud.ino, then upload the firmware.</div>
+          </div>
+          <div class="form-group"><label class="form-label">Local Agent Token</label><input type="password" class="form-control" id="s-agent-token" readonly/></div>
+          <button class="btn btn-primary btn-full" onclick="saveSettings()">Save Settings</button>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">📡 ESP32 Wi-Fi</div>
+          <div id="esp32-status" class="text-muted text-sm mb-2">Status not checked.</div>
+          <button class="btn btn-ghost btn-full mb-2" onclick="checkEsp32Status()">Check Wi-Fi Status</button>
+          <div class="form-group"><label class="form-label">New Wi-Fi Name</label><input type="text" class="form-control" id="s-wifi-ssid"/></div>
+          <div class="form-group"><label class="form-label">New Wi-Fi Password</label><input type="password" class="form-control" id="s-wifi-password"/></div>
+          <button class="btn btn-primary btn-full mb-2" onclick="changeEsp32Wifi()">Save Wi-Fi on ESP32</button>
+          <button class="btn btn-danger btn-full" onclick="resetEsp32Wifi()">Reset ESP32 Wi-Fi</button>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">📦 Export & Backup</div>
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <button class="btn btn-ghost btn-full" onclick="window.open('/api/reports/export/games?from=2000-01-01&to=2099-12-31')">⬇ All Games (Excel)</button>
+            <button class="btn btn-ghost btn-full" onclick="window.open('/api/reports/export/loans')">⬇ All Loans (Excel)</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title mb-2">🔑 Change My Password</div>
+          <div class="form-group"><label class="form-label">Current Password</label><div class="pw-wrap"><input type="text" class="form-control pw-mask" autocomplete="new-password" id="sp-old" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/><button type="button" class="pw-eye" onclick="togglePwField(this)">👁️</button></div></div>
+          <div class="form-group"><label class="form-label">New Password</label><div class="pw-wrap"><input type="text" class="form-control pw-mask" autocomplete="new-password" id="sp-new" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/><button type="button" class="pw-eye" onclick="togglePwField(this)">👁️</button></div></div>
+          <div class="form-group"><label class="form-label">Confirm</label><div class="pw-wrap"><input type="text" class="form-control pw-mask" autocomplete="new-password" id="sp-con" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/><button type="button" class="pw-eye" onclick="togglePwField(this)">👁️</button></div></div>
+          <button class="btn btn-primary btn-full" onclick="changeOwnPassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- EDIT GAME MODAL -->
+<div class="modal-overlay" id="modal-edit-game">
+  <div class="modal-box wide">
+    <div class="modal-title">✏️ Edit Game</div>
+    <input type="hidden" id="eg-id"/>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Player 1</label><input type="text" class="form-control" id="eg-p1"/></div>
+      <div class="form-group"><label class="form-label">Player 2</label><input type="text" class="form-control" id="eg-p2"/></div>
+    </div>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Player 3</label><input type="text" class="form-control" id="eg-p3"/></div>
+      <div class="form-group"><label class="form-label">Player 4</label><input type="text" class="form-control" id="eg-p4"/></div>
+    </div>
+    <div class="form-row col-3">
+      <div class="form-group"><label class="form-label">Loser</label><input type="text" class="form-control" id="eg-loser"/></div>
+      <div class="form-group"><label class="form-label">Game</label><select class="form-select" id="eg-table"></select></div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-select" id="eg-type"><option value="single">Single</option><option value="double">Double</option><option value="century">Century</option><option value="final">Final</option></select>
+      </div>
+    </div>
+    <div class="form-row col-3">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="eg-date"/></div>
+      <div class="form-group"><label class="form-label">Start</label><input type="time" class="form-control" id="eg-start" data-time-hint="eg-start-hint"/></div>
+      <div class="text-xs text-muted tabular" id="eg-start-hint" style="margin-top:-.45rem;margin-bottom:.65rem"></div>
+      <div class="form-group"><label class="form-label">End</label><input type="time" class="form-control" id="eg-end" data-time-hint="eg-end-hint"/></div>
+      <div class="text-xs text-muted tabular" id="eg-end-hint" style="margin-top:-.45rem;margin-bottom:.65rem"></div>
+    </div>
+    <div class="form-row col-3">
+      <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" class="form-control" id="eg-amount"/></div>
+      <div class="form-group"><label class="form-label">Payment</label>
+        <select class="form-select" id="eg-payment" onchange="togglePartial('eg')">
+          <option value="pending">Pending</option><option value="paid">Paid Cash</option><option value="easypaisa">Paid EasyPaisa</option><option value="jazz_cash">Paid JazzCash</option><option value="card">Paid Card</option><option value="partial">Partial</option><option value="loan">Loan</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-select" id="eg-status"><option value="active">Active</option><option value="completed">Completed</option><option value="void">Void</option></select>
+      </div>
+    </div>
+    <div class="form-group" id="eg-partial-wrap" style="display:none"><label class="form-label">Paid Amount</label><input type="number" class="form-control" id="eg-paid"/></div>
+    <div class="form-group" id="eg-loan-phone-wrap" style="display:none"><label class="form-label">&#128241; Phone (Req for Loan)</label><input type="text" class="form-control" id="eg-loan-phone" placeholder="Phone for this loan" autocomplete="off"/></div>
+    <div class="form-group"><label class="form-label">Remarks</label><input type="text" class="form-control" id="eg-remarks"/></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-game')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditGame()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT EMPLOYEE MODAL -->
+<div class="modal-overlay" id="modal-edit-emp">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Edit Employee</div>
+    <input type="hidden" id="ee-id"/>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" class="form-control" id="ee-fname"/></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-control" id="ee-phone"/></div>
+    </div>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Role</label><select class="form-select" id="ee-role"><option value="employee">Employee</option><option value="admin">Admin</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="ee-active"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">New Password <span class="text-muted text-xs">(leave blank to keep)</span></label><div class="pw-wrap"><input type="text" class="form-control pw-mask" autocomplete="new-password" id="ee-pass" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.toLowerCase()"/><button type="button" class="pw-eye" onclick="togglePwField(this)">👁️</button></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-emp')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditEmp()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TABLE MODAL -->
+<div class="modal-overlay" id="modal-edit-table">
+  <div class="modal-box">
+    <div class="modal-title" id="et-title">✏️ Edit Game</div>
+    <input type="hidden" id="et-id"/>
+    <input type="hidden" id="et-kind"/>
+    <div class="form-group"><label class="form-label" id="et-name-lbl">Game Name</label><input type="text" class="form-control" id="et-name"/></div>
+    <div class="form-group"><label class="form-label">Rate/Game (Rs.)</label><input type="number" class="form-control" id="et-rate-game"/></div>
+    <div class="form-group"><label class="form-label">Extra Charges (Rs.)</label><input type="number" class="form-control" id="et-extra-charges" min="0" step="0.01" placeholder="Optional"/></div>
+    <div id="et-snooker-fields">
+    <div class="form-group">
+      <label class="form-label">Century Rates — set either or both; the employee picks per game at Start Game</label>
+      <div class="form-row col-2">
+        <div class="form-group" style="margin-bottom:0"><label class="form-label" style="font-size:.62rem">Rate/min</label><input type="number" class="form-control" id="et-rate-min"/></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label" style="font-size:.62rem">Rate/hr</label><input type="number" class="form-control" id="et-rate-hour"/></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ball-Count Prices (Rs.) — optional, leave blank to use Rate/Game</label>
+      <div class="form-row col-4">
+        <input type="number" class="form-control" id="et-price-15" placeholder="15 Ball" min="0"/>
+        <input type="number" class="form-control" id="et-price-10" placeholder="10 Ball" min="0"/>
+        <input type="number" class="form-control" id="et-price-6" placeholder="6 Ball" min="0"/>
+        <input type="number" class="form-control" id="et-price-1" placeholder="1 Ball" min="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Timed Ball-Table Rates (Rs.) — separate from Century</label>
+      <div class="form-row col-2">
+        <div class="form-group" style="margin-bottom:0"><label class="form-label" style="font-size:.62rem">Per Minute</label><input type="number" class="form-control" id="et-snooker-rate-min" min="0" placeholder="Optional"/></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label" style="font-size:.62rem">Per Hour</label><input type="number" class="form-control" id="et-snooker-rate-hour" min="0" placeholder="Optional"/></div>
+      </div>
+    </div>
+    </div>
+    <div id="et-game-fields" style="display:none">
+      <div class="form-label">Game image</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.85rem">
+        <label class="text-xs" style="text-align:center;cursor:pointer"><input type="radio" name="et-g-style" value="controller"/><img src="/img/games/controller.jpg" alt="" style="width:100%;height:44px;object-fit:cover;display:block;border-radius:6px"/><span>Controller</span></label>
+        <label class="text-xs" style="text-align:center;cursor:pointer"><input type="radio" name="et-g-style" value="carrom"/><img src="/img/games/carrom.jpg" alt="" style="width:100%;height:44px;object-fit:cover;display:block;border-radius:6px"/><span>Carrom</span></label>
+        <label class="text-xs" style="text-align:center;cursor:pointer"><input type="radio" name="et-g-style" value="chess"/><img src="/img/games/chess.jpg" alt="" style="width:100%;height:44px;object-fit:cover;display:block;border-radius:6px"/><span>Chess</span></label>
+        <label class="text-xs" style="text-align:center;cursor:pointer"><input type="radio" name="et-g-style" value="ludo"/><img src="/img/games/ludo.jpg" alt="" style="width:100%;height:44px;object-fit:cover;display:block;border-radius:6px"/><span>Ludo</span></label>
+        <label class="text-xs" style="text-align:center;cursor:pointer"><input type="radio" name="et-g-style" value="tabletennis"/><img src="/img/games/tabletennis.jpg" alt="" style="width:100%;height:44px;object-fit:cover;display:block;border-radius:6px"/><span>Tennis</span></label>
+      </div>
+      <div class="form-label">Game modes</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:.85rem">
+        <label class="text-sm"><input type="checkbox" id="et-m-sp"/> Single player</label>
+        <label class="text-sm"><input type="checkbox" id="et-m-1v1"/> 1v1</label>
+        <label class="text-sm"><input type="checkbox" id="et-m-2v2"/> 2v2</label>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label class="form-label">Per Token (Rs.)</label><input type="number" class="form-control" id="et-rate-token" min="0"/></div>
+        <div class="form-group"><label class="form-label">Per Min (Rs.)</label><input type="number" class="form-control" id="et-g-rate-min" min="0"/></div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label class="form-label">Per 30 min (Rs.)</label><input type="number" class="form-control" id="et-rate-30min" min="0"/></div>
+        <div class="form-group"><label class="form-label">Per Hour (Rs.)</label><input type="number" class="form-control" id="et-g-rate-hour" min="0"/></div>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="et-active"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-table')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditTable()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE CAFE ORDER MODAL -->
+<div class="modal-overlay" id="modal-table-cafe">
+  <div class="modal-box wide">
+    <div class="modal-title">☕ Café Order - <span id="tco-title"></span></div>
+    <input type="hidden" id="tco-game-id"/>
+    <input type="hidden" id="tco-table-id"/>
+    <input type="hidden" id="tco-player-name"/>
+    <div id="tco-items" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem;margin-bottom:1.5rem"></div>
+    <div class="card" style="background:var(--pocket);border:1px solid rgba(201,168,76,.2);padding:1rem">
+      <div class="card-title mb-2" style="font-size:.85rem">🛒 Current Order</div>
+      <div id="tco-cart" style="font-size:.82rem"><div class="text-muted">No items selected</div></div>
+      <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center">
+        <span class="fw-600">Total:</span>
+        <span class="text-gold fw-600" id="tco-total">Rs. 0</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-table-cafe')">Cancel</button>
+      <button class="btn btn-primary" onclick="placeTableCafeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CAFE ITEM MODAL -->
+<div class="modal-overlay" id="modal-edit-cafe">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Edit Café Item</div>
+    <input type="hidden" id="eci-id"/>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-control" id="eci-name" autocapitalize="off"/></div>
+      <div class="form-group"><label class="form-label">Category</label><select class="form-select" id="eci-cat"></select></div>
+    </div>
+    <div class="form-row col-2">
+      <div class="form-group"><label class="form-label">Sale Price (Rs.)</label><input type="number" class="form-control" id="eci-price" min="0"/></div>
+      <div class="form-group"><label class="form-label">Purchase Price (Rs.)</label><input type="number" class="form-control" id="eci-cost" min="0"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Stock</label><input type="number" class="form-control" id="eci-stock" min="0"/></div>
+    <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="eci-active"><option value="1">Active</option><option value="0">Inactive</option></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-edit-cafe')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCafeItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- BILL CHECKOUT MODAL -->
+<div class="modal-overlay" id="modal-checkout">
+  <div class="modal-box wide">
+    <div class="modal-title">💳 Player Checkout</div>
+    <input type="hidden" id="co-bill-id"/>
+    <input type="hidden" id="co-free-of-cost" value="0" />
+    <input type="hidden" id="co-plus-available" value="0" />
+    <input type="hidden" id="co-phone"/>
+    <div id="co-details"></div>
+    <div class="divider"></div>
+    <div class="co-bill-row">
+      <div class="form-group"><label class="form-label">Bill total</label><input type="number" class="form-control" id="co-amount" readonly /></div>
+      <div class="form-group"><label class="form-label">Discount (optional)</label><input type="number" class="form-control" id="co-discount" min="0" value="0" oninput="calcCheckout()" /></div>
+    </div>
+    <div class="co-topay-banner">
+      <div class="co-topay-lbl">Amount to collect</div>
+      <input type="number" class="form-control" id="co-topay" readonly />
+    </div>
+    <div class="co-pay-head">
+      <strong>How is it paid?</strong>
+      <div class="co-pay-quick">
+        <button type="button" class="btn btn-ghost" onclick="fillCheckoutAll('cash')">All cash</button>
+        <button type="button" class="btn btn-ghost" onclick="fillCheckoutAll('online')">All online</button>
+        <button type="button" class="btn btn-ghost" onclick="fillCheckoutAll('loan')">All loan</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="co-free-button" onclick="toggleFreeOfCostCheckout()">Guest / Free of Cost</button>
+      </div>
+    </div>
+    <div class="co-pay-grid">
+      <div class="co-pay-box co-pay-cash">
+        <div class="form-group">
+          <label class="form-label">Cash in hand</label>
+          <input type="number" class="form-control" id="co-cash" min="0" value="0" oninput="calcCheckout('cash')" />
+          <div class="form-hint">Notes / coins received now</div>
+        </div>
+      </div>
+      <div class="co-pay-box co-pay-online">
+        <div class="form-group">
+          <label class="form-label">Online transfer</label>
+          <input type="number" class="form-control" id="co-online" min="0" placeholder="0" oninput="calcCheckout()" />
+          <div class="form-hint">JazzCash / EasyPaisa / card</div>
+        </div>
+        <div class="form-group mt-1" id="co-online-method-wrap" style="display:none">
+          <label class="form-label">App / method</label>
+          <select class="form-select" id="co-online-method">
+            <option value="easypaisa">EasyPaisa</option>
+            <option value="jazz_cash">JazzCash</option>
+            <option value="card">Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="co-pay-box co-pay-loan">
+        <div class="form-group">
+          <label class="form-label">Loan (not paid)</label>
+          <input type="number" class="form-control" id="co-loan" min="0" placeholder="0" oninput="calcCheckout()" />
+          <div class="form-hint">Player will pay later</div>
+        </div>
+        <div class="form-group mt-1" id="co-loan-phone-wrap" style="display:none">
+          <label class="form-label">Loan phone *</label>
+          <input type="text" class="form-control" id="co-loan-phone" placeholder="Required for loan" />
+        </div>
+      </div>
+    </div>
+    <div id="co-status" class="co-status ok">Fully allocated</div>
+    <span id="co-allocated" class="sr-only" hidden></span>
+    <span id="co-remain" class="sr-only" hidden></span>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-checkout')">Cancel</button>
+      <button class="btn btn-primary" onclick="doCheckout()">Confirm Checkout</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER BILL DETAIL MODAL -->
+<div class="modal-overlay" id="modal-bill-detail">
+  <div class="modal-box wide">
+    <div class="modal-title">🧾 <span id="bd-title">Player Statement</span></div>
+    <div id="bd-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="bd-delete-btn">Delete Bill</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-bill-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/utils.js?v=mvcy1nbd"></script>
+<script>
+// ── AUTH ─────────────────────────────────────────────────────────
+let allTables=[], allEmps=[];
+(async()=>{
+  const me=await GET('/api/auth/me');
+  if(!me?.ok||me.user.role!=='admin'){window.location.href='/';return;}
+  document.getElementById('user-name').textContent=me.user.full_name;
+  document.getElementById('user-avatar').textContent=initials(me.user.full_name);
+  const s=await getSettings();
+  applyBranding(s);
+  applyDemoVideoNav(s);
+  // License warning
+  const sub=await GET('/api/settings/subscription');
+  if(sub&&sub.days_left!==null&&sub.days_left<=7&&sub.days_left>=0){
+    const bar=document.getElementById('license-bar');
+    bar.className=sub.days_left<=2?'license-banner urgent':'license-banner';
+    bar.innerHTML=`⚠️ Your subscription expires in <strong>${sub.days_left} day${sub.days_left===1?'':'s'}</strong>. Contact your administrator to renew.`;
+    bar.style.display='flex';
+  }
+  startClock('live-clock');
+  initTimeHints();
+  document.getElementById('dash-date').value=todayStr();
+  document.getElementById('gf-from').value=addDays(todayStr(),-7);
+  document.getElementById('gf-to').value=todayStr();
+  document.getElementById('lf-from').value=addDays(todayStr(),-30);
+  document.getElementById('lf-to').value=todayStr();
+  document.getElementById('ae-date').value=todayStr();
+  document.getElementById('ef-from').value=addDays(todayStr(),-30);
+  document.getElementById('ef-to').value=todayStr();
+  document.getElementById('bc-from').value=addDays(todayStr(),-30);
+  document.getElementById('bc-to').value=todayStr();
+  document.getElementById('af-from').value=addDays(todayStr(),-7);
+  document.getElementById('af-to').value=todayStr();
+  document.getElementById('fb-date').value='';
+  document.getElementById('crf-date').value=todayStr();
+  await loadAllTables(); await loadAllEmps();
+  loadDashboard(); checkVoidCount();
+  setInterval(checkVoidCount,60000);
+  setInterval(tickRunning,60000);
+  // Dashboard/Live Board show live shift totals — refresh whichever is on screen so changes
+  // made elsewhere (employee checkouts, loan payments) show up without a manual reload.
+  setInterval(()=>{
+    if(document.getElementById('page-dash')?.classList.contains('active')) loadDashboard();
+    if(document.getElementById('page-board')?.classList.contains('active')) loadAdminBoard();
+  },15000);
+})();
+
+// ── NAV ──────────────────────────────────────────────────────────
+const PT={
+  'page-dash':'Dashboard','page-board':'Live Board','page-games':'Today\'s Games',
+  'page-bills':'Player Bills','page-loans':'Loans','page-exp':'Expenses','page-clears':'Revenue',
+  'page-cafe':'Café Inventory','page-caferep':'Café Reports',
+  'page-emps':'Employees','page-tables':'Games','page-void':'Void Requests',
+  'page-reports':'Reports','page-audit':'Audit Log','page-settings':'Settings'
+};
+function nav(page,navId){
+  showPage(page,navId);
+  document.getElementById('page-title').textContent=PT[page]||'';
+  closeSidebar();
+  if(page==='page-board')   loadAdminBoard();
+  if(page==='page-games')   loadGames();
+  if(page==='page-bills')   loadBills();
+  if(page==='page-loans')   { loadAdminLoans(); loadLoansKPI(); }
+  if(page==='page-exp')     loadExpenses();
+  if(page==='page-clears')  loadBoardClears();
+  if(page==='page-cafe')    { initCafeCategorySelects(); loadCafeInventory(); }
+  if(page==='page-caferep') loadCafeReport();
+  if(page==='page-emps')    loadEmployees();
+  if(page==='page-tables')  loadTables();
+  if(page==='page-void')    loadVoidRequests();
+  if(page==='page-reports') loadReports();
+  if(page==='page-audit')   { loadAuditUsers(); loadAudit(); }
+  if(page==='page-settings'){ loadSettingsForm(); }
+}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('open');}
+async function logout(){await POST('/api/auth/logout');window.location.href='/';}
+
+// ── CACHES ───────────────────────────────────────────────────────
+async function loadAllTables(){
+  allTables=await GET('/api/tables')||[];
+  ['gf-table','eg-table'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    const pfx=id==='gf-table'?'<option value="">All Games</option>':'';
+    el.innerHTML=pfx+allTables.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  });
+}
+async function loadAllEmps(){
+  allEmps=await GET('/api/users')||[];
+  ['gf-emp','af-user'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.innerHTML='<option value="">All</option>'+allEmps.map(u=>`<option value="${u.id}">${u.full_name}</option>`).join('');
+  });
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────────
+async function loadDashboard(){
+  const date=document.getElementById('dash-date').value||todayStr();
+  document.getElementById('dash-date-lbl').textContent=fmtDate(date);
+  const q=date===todayStr()?`shift=1`:`date=${date}`;
+  const d=await GET(`/api/reports/dashboard?${q}`); if(!d) return;
+
+  document.getElementById('dash-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num">${d.totalGames}</div><div class="kpi-label">Games</div></div>
+    <div class="kpi-card"><div class="kpi-num">${d.activeGames}</div><div class="kpi-label">Active Now</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${Math.max(0,(d.tableStats?.length||0)-d.activeGames)}</div><div class="kpi-label">Free Games</div></div>
+    <div class="kpi-card"><div class="kpi-num">${curSync(d.cashSale || 0)}</div><div class="kpi-label">Cash</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(d.onlineSale || 0)}</div><div class="kpi-label">Online</div></div>
+    <div class="kpi-card"><div class="kpi-num">${curSync(d.gameSale)}</div><div class="kpi-label">Game Sale</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.pendingAmount)}</div><div class="kpi-label">Game Pending</div></div>
+    <div class="kpi-card"><div class="kpi-num">${curSync(d.cafeRevenue)}</div><div class="kpi-label">Cafe Sale</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.cafePending)}</div><div class="kpi-label">Cafe Pending</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.loanToday)}</div><div class="kpi-label">Loan Balance</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(d.loanRecovered)}</div><div class="kpi-label">Loan Recovered</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.expenses)}</div><div class="kpi-label">Expenses</div></div>
+    <div class="kpi-card"><div class="kpi-num">${curSync(d.globalDiscount || 0)}</div><div class="kpi-label">Discount</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(d.totalSale)}</div><div class="kpi-label">Total Sale</div></div>`;
+
+  // Table chart
+  const tv=d.tableStats.map(t=>t.revenue), tm=Math.max(...tv,1);
+  document.getElementById('chart-table').innerHTML=d.tableStats.map(t=>`<div class="bar-col"><div class="bar-val">${t.revenue?curSync(t.revenue):''}</div><div class="bar" style="height:${Math.max(4,Math.round(t.revenue/tm*78))}px;background:var(--gold)"></div></div>`).join('');
+  document.getElementById('chart-table-lbl').innerHTML=d.tableStats.map(t=>`<div class="bar-lbl" style="flex:1">${t.name.replace('Table ','T')}</div>`).join('');
+
+  // Hour chart
+  const hours=Array(12).fill(0);
+  d.games.forEach(g=>{const h=parseInt(g.start_time);const s=Math.max(0,Math.min(11,h-8));hours[s]++;});
+  const hm=Math.max(...hours,1);
+  document.getElementById('chart-hour').innerHTML=hours.map((v,i)=>`<div class="bar-col"><div class="bar-val">${v||''}</div><div class="bar" style="height:${Math.max(4,Math.round(v/hm*78))}px;background:var(--blue);opacity:.8"></div></div>`).join('');
+  document.getElementById('chart-hour-lbl').innerHTML=hours.map((_,i)=>`<div class="bar-lbl" style="flex:1">${(i+8)%12||12}${i+8<12?'a':'p'}</div>`).join('');
+
+  // Top players
+  const cm={};
+  d.games.forEach(g=>[g.player1,g.player2,g.player3,g.player4].filter(Boolean).forEach(p=>{cm[p]=(cm[p]||0)+1;}));
+  const top=Object.entries(cm).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('top-players').innerHTML=top.length
+    ?top.map(([n,c],i)=>`<div class="flex-between" style="padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04)"><span class="text-sm">${i+1}. ${n}</span><span class="badge badge-gold">${c}</span></div>`).join('')
+    :'<div class="text-muted text-sm" style="padding:.5rem">No games yet</div>';
+
+  document.getElementById('emp-stats').innerHTML=d.empStats.map(e=>`<div class="flex-between" style="padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04)"><span class="text-sm">${e.full_name}</span><span class="text-xs text-muted">${e.games} · ${curSync(e.revenue)}</span></div>`).join('')||'<div class="text-muted text-xs">—</div>';
+
+  // Pending bills
+  const bills=await GET(`/api/bills/summary/pending?date=${date}`)||[];
+  document.getElementById('dash-bills').innerHTML=bills.length
+    ?`<div class="text-xs text-muted mb-1">${bills.length} players with pending balance</div>`+
+      bills.map(b=>`<div class="flex-between" style="padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04)">
+        <span class="text-sm fw-600">${b.player_name}</span>
+        <span class="text-red fw-600">${curSync(b.balance)}</span>
+      </div>`).join('')
+    :'<div class="text-muted text-sm">All bills cleared ✅</div>';
+
+  // Café
+  document.getElementById('dash-cafe').innerHTML=`
+    <div class="flex-between mb-2"><span class="text-muted text-sm">Total Orders</span><span class="fw-600">${curSync(d.cafeRevenue)}</span></div>
+    <div class="flex-between mb-2"><span class="text-muted text-sm">Collected</span><span class="text-green fw-600">${curSync(d.cafePaid)}</span></div>
+    <div class="flex-between"><span class="text-muted text-sm">Pending</span><span class="text-red fw-600">${curSync(d.cafePending)}</span></div>`;
+
+  // Games table
+  const wrap=document.getElementById('dash-games');
+  if(!d.games.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🎱</div><p>No games.</p></div>';return;}
+  wrap.innerHTML=buildGamesTable(d.games,true);
+}
+function jumpToday(){document.getElementById('dash-date').value=todayStr();loadDashboard();}
+function shiftDash(n){document.getElementById('dash-date').value=addDays(document.getElementById('dash-date').value||todayStr(),n);loadDashboard();}
+function exportDashGames(){window.open(`/api/reports/export/games?date=${document.getElementById('dash-date').value||todayStr()}`);}
+function tickRunning(){document.querySelectorAll('.game-duration[data-start]').forEach(el=>{
+  el.textContent=fmtDuration(runningMins(el.dataset.start,el.dataset.date));
+});document.querySelectorAll('[data-start]:not(.game-duration)').forEach(el=>{
+  const mins=runningMins(el.dataset.start,el.dataset.date);
+  const amt=['single_player','1v1','2v2'].includes(el.dataset.type)
+    ?arcadeAmount({rate_min:Number(el.dataset.rate),rate_hour:Number(el.dataset.rateHour||0),rate_token:Number(el.dataset.rateToken||0),rate_30min:Number(el.dataset.rate30||0),rate_game:Number(el.dataset.rateGame||0)},mins,el.dataset.billing,el.dataset.tokens)
+    :(el.dataset.type==='century'
+    ?centuryAmount({rate_min:Number(el.dataset.rate),rate_hour:Number(el.dataset.rateHour||0)},mins,el.dataset.rateType)
+    :Number(el.dataset.fixed));
+  el.textContent=`Rs. ${amt}`;
+});}
+
+// ── LIVE BOARD ───────────────────────────────────────────────────
+async function loadAdminBoard(target='admin-board'){
+  const kpiEl=document.getElementById('admin-board-kpi');
+  if(kpiEl){
+    const d=await GET(`/api/reports/dashboard?shift=1`);
+    if(d && !d.error) {
+      const saleCard = (typeof liveBoardTotalSaleCard === 'function')
+        ? liveBoardTotalSaleCard(d, false)
+        : `<div class="kpi-card"><div class="kpi-num text-green">${curSync(d.netProfit)}</div><div class="kpi-label">Total Sale (After Expenses)</div></div>`;
+      kpiEl.innerHTML=`
+      <div class="kpi-card"><div class="kpi-num">${d.totalGames}</div><div class="kpi-label">Games</div></div>
+      <div class="kpi-card"><div class="kpi-num">${d.activeGames}</div><div class="kpi-label">Active Now</div></div>
+      <div class="kpi-card"><div class="kpi-num">${curSync(d.cashSale || 0)}</div><div class="kpi-label">Cash</div></div>
+      <div class="kpi-card"><div class="kpi-num text-green">${curSync(d.onlineSale || 0)}</div><div class="kpi-label">Online</div></div>
+      <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.loanToday)}</div><div class="kpi-label">Loan Balance</div></div>
+      ${saleCard}`;
+    }
+  }
+  const el=document.getElementById(target); if(!el) return;
+  const tablesRaw=await GET('/api/tables');
+  const tables=Array.isArray(tablesRaw)?tablesRaw:[];
+  const styleAttr=(t)=>typeof gameStyleAttr==='function'?gameStyleAttr(t):'';
+  const styleImg=(t)=>typeof gameStyleImg==='function'?gameStyleImg(t):'';
+  el.innerHTML=tables.map(t=>{
+    const g=t.active_game;
+    if(g){
+      const mins=runningMins(g.start_time,g.date);
+      const pl=[g.player1,g.player2,g.player3,g.player4].filter(Boolean).join(' / ')||(g.game_type==='century'?'Century':'Game');
+      const ballRate=getBallRate(t,g.ball_type);
+      const fixedAmt=g.game_type==='double'?ballRate*2:ballRate;
+      const est=['single_player','1v1','2v2'].includes(g.game_type)
+        ?arcadeAmount(t,mins,g.billing_type,g.token_count)
+        :(g.game_type==='century'?centuryAmount(t,mins,g.century_rate_type):fixedAmt);
+      return `<div class="table-card active${t.table_kind==='game'?' kind-game':''}"${styleAttr(t)}>
+        ${styleImg(t)}
+        <div class="t-num">${t.name}</div>
+        <div class="t-name">${pl}</div>
+        <div class="t-time">${typeBadge(g.game_type)} · ${fmtTime12(g.start_time)} · ${fmtDuration(mins)}</div>
+        <div class="t-amount" data-start="${g.start_time}" data-date="${g.date}" data-rate="${t.rate_min||3}" data-rate-hour="${t.rate_hour||0}" data-rate-type="${g.century_rate_type||'min'}" data-type="${g.game_type}" data-billing="${g.billing_type||''}" data-tokens="${g.token_count||1}" data-rate-token="${t.rate_token||0}" data-rate-30="${t.rate_30min||0}" data-rate-game="${t.rate_game||0}" data-fixed="${fixedAmt}">Rs. ${est}</div>
+        <div style="margin-top:4px"><span class="badge badge-green">▶ Live</span></div>
+        <div class="text-xs text-muted" style="margin-top:3px">By: ${g.employee_name}</div>
+      </div>`;
+    }
+    return `<div class="table-card free${t.table_kind==='game'?' kind-game':''}"${styleAttr(t)}>${styleImg(t)}<div class="t-num">${t.name}</div><div class="t-name text-muted">AVAILABLE</div><div class="t-time">Rs.${t.rate_game}/game</div></div>`;
+  }).join('');
+}
+
+// ── GAMES ────────────────────────────────────────────────────────
+let filteredGames=[];
+async function loadGames(){
+  const from=document.getElementById('gf-from').value,to=document.getElementById('gf-to').value;
+  const tbl=document.getElementById('gf-table').value,typ=document.getElementById('gf-type').value;
+  const emp=document.getElementById('gf-emp').value,pay=document.getElementById('gf-pay').value;
+  const pl=document.getElementById('gf-player').value;
+  let q=`?from=${from}&to=${to}`;
+  if(tbl) q+=`&table_id=${tbl}`;if(typ) q+=`&game_type=${typ}`;if(emp) q+=`&employee_id=${emp}`;
+  if(pay) q+=`&payment_status=${pay}`;if(pl) q+=`&customer=${encodeURIComponent(pl)}`;
+  filteredGames=await GET(`/api/games${q}`)||[];
+  const valid=filteredGames.filter(g=>g.status!=='void'&&g.status!=='cancelled');
+  // Total = money actually collected (paid). Loan = amount raised as loans (per-game link).
+  // Pending = the remainder still owed on a tab, excluding any loaned portion (handles mixed doubles).
+  const collected=valid.reduce((s,g)=>s+(g.payment_status==='paid'?g.amount:g.paid_amount),0);
+  const cash=valid.reduce((s,g)=>s+gameCashAmt(g),0);
+  const online=valid.reduce((s,g)=>s+gameOnlineAmt(g),0);
+  const loan=valid.reduce((s,g)=>s+gameLoanAmt(g),0);
+  const pending=valid.reduce((s,g)=>{
+    if(g.payment_status==='paid') return s;
+    const owed=g.amount-g.paid_amount-gameLoanAmt(g);
+    return s+(owed>0?owed:0);
+  },0);
+  document.getElementById('games-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num">${valid.length}</div><div class="kpi-label">Games</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(collected)}</div><div class="kpi-label">Total</div></div>
+    <div class="kpi-card"><div class="kpi-num">${curSync(cash)}</div><div class="kpi-label">Cash</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(online)}</div><div class="kpi-label">Online</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(pending)}</div><div class="kpi-label">Pending</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(loan)}</div><div class="kpi-label">Loan</div></div>
+    <div class="kpi-card"><div class="kpi-num">${valid.filter(g=>g.status==='active').length}</div><div class="kpi-label">Active</div></div>`;
+  const wrap=document.getElementById('games-table');
+  if(!filteredGames.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🎮</div><p>No records.</p></div>';return;}
+  wrap.innerHTML=buildGamesTable(filteredGames,true);
+}
+function exportFilteredGames(){window.open(`/api/reports/export/games?from=${document.getElementById('gf-from').value}&to=${document.getElementById('gf-to').value}`);}
+function buildGamesTable(games,showAdmin=false){
+  return `<table class="data-tbl"><thead><tr>
+    <th>Date</th><th>Game</th><th>Type</th><th>Ball Count</th><th>Players</th><th>Loser</th><th>Start Time</th><th>End Time</th><th>Duration</th><th>Amount</th><th>Payment</th><th>Status</th><th>Employee</th>${showAdmin?'<th>Actions</th>':''}
+  </tr></thead><tbody>${games.map(g=>{
+    const pl=[g.player1,g.player2,g.player3,g.player4].filter(Boolean).join(' / ')||'—';
+    const durationMins=g.status==='active'?runningMins(g.start_time,g.date):(g.duration_mins??calcDuration(g.start_time,g.end_time));
+    return `<tr>
+      <td class="text-xs tabular">${fmtDate(g.date)}</td>
+      <td><span class="badge badge-gold">${g.table_name}</span></td>
+      <td>${typeBadge(g.game_type)}</td>
+      <td>${ballTypeBadge(g.ball_type)}</td>
+      <td class="fw-600 text-sm">${pl}</td>
+      <td>${g.loser?`<span class="badge badge-red">${g.loser}</span>`:'—'}</td>
+      <td class="tabular text-sm">${fmtTime12(g.start_time)}</td>
+      <td class="tabular text-sm">${g.end_time?fmtTime12(g.end_time):'<span class="running">Live</span>'}</td>
+      <td class="text-sm game-duration ${g.status==='active'?'running':''}"${g.status==='active'?` data-start="${g.start_time}" data-date="${g.date}"`:''}>${fmtDuration(durationMins)}</td>
+      <td>${curSync(g.amount)}</td>
+      <td>${payBadge(g.payment_status, g.payment_method)}</td>
+      <td>${statusBadge(g.status)}</td>
+      <td class="text-xs text-muted">${g.employee_name}</td>
+      ${showAdmin?`<td style="white-space:nowrap">
+        ${g.status!=='void'?`<button class="btn btn-ghost btn-sm" onclick='openEditGame(${JSON.stringify(g)})'>Edit</button> `:''}
+        ${g.status!=='void'?`<button class="btn btn-danger btn-sm" onclick="adminVoid(${g.id})">Void</button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="deleteGame(${g.id})">Delete</button>
+      </td>`:''}
+    </tr>`;
+  }).join('')}</tbody>
+  <tfoot><tr><td colspan="${showAdmin?9:8}">Total (${games.length})</td><td>${curSync(games.reduce((s,g)=>s+g.amount,0))}</td><td colspan="${showAdmin?4:3}"></td></tr></tfoot>
+  </table>`;
+}
+function openEditGame(g){
+  document.getElementById('eg-id').value=g.id;
+  ['p1','p2','p3','p4'].forEach((x,i)=>document.getElementById(`eg-p${i+1}`).value=g[`player${i+1}`]||'');
+  document.getElementById('eg-loser').value=g.loser||'';
+  document.getElementById('eg-table').value=g.table_id;
+  document.getElementById('eg-table').disabled=g.status==='active';
+  document.getElementById('eg-type').value=g.game_type||'single';
+  document.getElementById('eg-date').value=g.date;
+  document.getElementById('eg-start').value=g.start_time;
+  document.getElementById('eg-end').value=g.end_time||'';
+  syncTimeHint('eg-start','eg-start-hint');
+  syncTimeHint('eg-end','eg-end-hint');
+  document.getElementById('eg-amount').value=g.amount;
+  document.getElementById('eg-payment').value=(g.payment_status==='paid' && isOnlineMethod(g.payment_method))?g.payment_method:g.payment_status;
+  document.getElementById('eg-paid').value=g.paid_amount;
+  document.getElementById('eg-status').value=g.status;
+  document.getElementById('eg-remarks').value=g.remarks||'';
+  document.getElementById('eg-loan-phone').value='';
+  togglePartial('eg');
+  const modalTitle=document.querySelector('#modal-edit-game .modal-title');
+  if(g.status==='active'){
+    modalTitle.innerHTML='🎮 End Game';
+  }else{
+    modalTitle.innerHTML='✏️ Edit Game';
+  }
+  openModal('modal-edit-game');
+}
+async function saveEditGame(){
+  const id=document.getElementById('eg-id').value;
+  const payment=document.getElementById('eg-payment').value;
+  const loanPhone=document.getElementById('eg-loan-phone').value.trim();
+  if(payment==='loan' && !loanPhone){toast('Enter phone for this loan','error');return;}
+  const r=await PUT(`/api/games/${id}`,{
+    loan_phone:payment==='loan'?loanPhone:null,
+    player1:document.getElementById('eg-p1').value.trim()||null,
+    player2:document.getElementById('eg-p2').value.trim()||null,
+    player3:document.getElementById('eg-p3').value.trim()||null,
+    player4:document.getElementById('eg-p4').value.trim()||null,
+    loser:document.getElementById('eg-loser').value.trim()||null,
+    table_id:document.getElementById('eg-table').value,
+    game_type:document.getElementById('eg-type').value,
+    date:document.getElementById('eg-date').value,
+    start_time:document.getElementById('eg-start').value,
+    end_time:document.getElementById('eg-end').value||null,
+    amount:Number(document.getElementById('eg-amount').value),
+    payment_status:document.getElementById('eg-payment').value,
+    paid_amount:Number(document.getElementById('eg-paid').value||0),
+    status:document.getElementById('eg-status').value,
+    remarks:document.getElementById('eg-remarks').value.trim(),
+  });
+  if(r?.ok){toast('Game updated');closeModal('modal-edit-game');loadGames();loadDashboard();}
+  else toast(r?.error||'Error','error');
+}
+async function adminVoid(id){
+  const reason=prompt('Reason for voiding:'); if(!reason?.trim()) return;
+  const r=await POST(`/api/games/${id}/void`,{reason});
+  if(r?.ok){toast('Entry voided');loadGames();loadDashboard();}
+  else toast(r?.error||'Error','error');
+}
+async function deleteGame(id){
+  if(!confirm('Delete this game and its linked loan/café records? This cannot be undone.')) return;
+  const r=await DEL(`/api/games/${id}`);
+  if(r?.ok){toast('Game deleted');loadGames();loadDashboard();}
+  else toast(r?.error||'Error','error');
+}
+
+// ── PLAYER BILLS ─────────────────────────────────────────────────
+async function fillBillTableFilter(){
+  const sel=document.getElementById('fb-table');
+  if(!sel || sel.options.length>1) return;
+  const tables=await GET('/api/tables')||[];
+  sel.innerHTML='<option value="">All games</option>'+(tables||[]).map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+}
+let billRows=[];
+let billsPage=1;
+async function loadBills(page=1){
+  billsPage=page;
+  const date=document.getElementById('fb-date').value;
+  const q=document.getElementById('fb-player').value.trim();
+  const status=document.getElementById('fb-status').value;
+  await fillBillTableFilter();
+  const table=document.getElementById('fb-table').value;
+  let url = `/api/bills/overview?page=${page}&limit=20`;
+  if(date) url += `&date=${date}`;
+  if(q) url += `&player=${encodeURIComponent(q)}`;
+  if(status) url += `&status=${status}`;
+  if(table) url += `&table=${encodeURIComponent(table)}`;
+
+  const res=await GET(url);
+  if(!res || !res.data) return;
+  billRows=res.data;
+
+  const d = await GET(`/api/reports/dashboard?shift=1`) || {};
+
+  document.getElementById('bills-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num">${res.total}</div><div class="kpi-label">Bills Found</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(res.totals?.paid || 0)}</div><div class="kpi-label">Total Paid Amount</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.pendingAmount||0)}</div><div class="kpi-label">Game Pending</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.cafePending||0)}</div><div class="kpi-label">Cafe Pending</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(d.loanToday||0)}</div><div class="kpi-label">Loan Balance</div></div>`;
+
+  const wrap=document.getElementById('bills-table');
+  if(!billRows.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🧾</div><p>No player activity found.</p></div>';return;}
+  
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Date</th><th>Player</th><th>Game Name</th><th>Games</th><th>Game Rs.</th><th>Cafe Rs.</th><th>Discount</th><th>Paid</th><th>Loan</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${billRows.map((r,i)=>{
+      const st = r.free_of_cost ? '<span class="badge badge-orange">Guest / Free of Cost</span>' : (r.balance>0 ? '<span class="badge badge-red">Pending</span>' : (r.loan>0 ? '<span class="badge badge-orange">On Loan</span>' : '<span class="badge badge-green">Cleared</span>'));
+      return `<tr class="${r.balance>0?'flagged-row':''}">
+        <td class="text-xs tabular">${fmtDateOrToday(r.date)}</td>
+        <td class="fw-600">${r.player_name}</td>
+        <td class="text-sm">${r.game_names || '—'}</td>
+        <td class="text-sm">${r.games}</td>
+        <td>${curSync(r.game_amount)}</td>
+        <td>${curSync(r.cafe_amount)}</td>
+        <td>${curSync(r.discount || 0)}</td>
+        <td class="text-green">${curSync(r.paid)}</td>
+        <td class="text-red">${curSync(r.loan)}</td>
+        <td class="fw-600 ${r.balance>0?'text-red':''}">${curSync(r.balance)}</td>
+        <td>${st}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-sm" onclick="showBillDetail(${i})">View</button>
+          ${r.balance>0 && r.bill_id ? ` <button class="btn btn-primary btn-sm" onclick="openCheckout(${r.bill_id},${r.balance},'${r.player_name.replace(/'/g, "\\'")}', '${r.phone || ''}',${Number(r.plus_available || 0)})">Checkout</button>` : ''}
+          ${r.bill_id ? ` <button class="btn btn-danger btn-sm" onclick="deleteBill(${r.bill_id})">Delete</button>` : ''}
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding:0 .5rem">
+      <button class="btn btn-ghost btn-sm" ${res.page<=1?'disabled':''} onclick="loadBills(${res.page-1})">Previous</button>
+      <span class="text-sm text-muted">Page ${res.page} of ${res.totalPages}</span>
+      <button class="btn btn-ghost btn-sm" ${res.page>=res.totalPages?'disabled':''} onclick="loadBills(${res.page+1})">Next</button>
+    </div>`;
+}
+async function editGameLoser(id, currentLoser) {
+  const newName = prompt("Enter new player name for this game:", currentLoser);
+  if (newName === null) return;
+  const upperName = newName.trim().toUpperCase();
+  const res = await PUT(`/api/games/${id}`, { loser: upperName });
+  if(res?.ok) {
+    toast("Player name updated!");
+    closeModal('modal-bill-detail');
+    if (typeof loadBills === 'function') loadBills(typeof billsPage !== 'undefined' ? billsPage : 1);
+  } else {
+    toast(res?.error || "Error", "error");
+  }
+}
+async function updateBillPhone(id, phone) {
+  const r = await PUT(`/api/bills/${id}/phone`, { phone });
+  if (r?.ok) { toast('Phone updated!'); loadBills(billsPage); }
+  else { toast(r?.error || 'Error', 'error'); }
+}
+async function deleteBill(id){
+  if(!confirm('Delete this bill and all linked game, café, and loan records? This cannot be undone.')) return;
+  const r=await DEL(`/api/bills/${id}`);
+  if(r?.ok){closeModal('modal-bill-detail');toast('Player bill deleted');loadBills(billsPage);loadDashboard();}
+  else toast(r?.error||'Error','error');
+}
+async function showBillDetail(i){
+  const r=billRows[i]; if(!r || !r.bill_id) return;
+  const bill=await GET(`/api/bills/${r.bill_id}`);
+  if(!bill) return;
+  const games=bill.games||[];
+  const orders=bill.cafeOrders||[];
+  document.getElementById('bd-title').innerHTML=`${r.player_name} — ${fmtDateOrToday(r.date)}`;
+  document.getElementById('bd-delete-btn').onclick=()=>deleteBill(r.bill_id);
+  const gamesHtml = games.length
+    ? `<table class="data-tbl"><thead><tr><th>Game</th><th>Type</th><th>Players</th><th>Amount</th><th>Payment</th><th>Role</th><th>Actions</th></tr></thead>
+        <tbody>${games.map(g=>`<tr>
+          <td><span class="badge badge-gold">${g.table_name}</span></td>
+          <td>${typeBadge(g.game_type)}</td>
+          <td class="text-sm">${[g.player1,g.player2,g.player3,g.player4].filter(Boolean).join(' / ')||'—'}</td>
+          <td>${curSync(g.amount)}</td>
+          <td>${payBadge(g.payment_status, g.payment_method)}</td>
+          <td>${(g.loser||'').split(',').map(s=>s.trim()).includes(r.player_name)?'<span class="badge badge-red">Loser</span>':'<span class="badge badge-muted">Player</span>'}</td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-ghost btn-sm" onclick="editGameLoser(${g.id}, '${g.loser || ''}')">Edit Name</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteGameFromBill(${g.id})">Delete</button>
+          </td>
+        </tr>`).join('')}</tbody></table>`
+    : '<div class="text-muted text-sm" style="padding:.5rem">No games.</div>';
+  const orderHtml = orders.length
+    ? `<table class="data-tbl"><thead><tr><th>Time</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>${orders.map(o=>`<tr>
+          <td class="text-xs tabular">${fmtTime12(orderClock(o.created_at))}</td>
+          <td class="text-sm">${(o.items||[]).map(it=>`${it.item_name} x${it.qty}`).join(', ')||'—'}</td>
+          <td>${curSync(o.total)}</td>
+          <td>${payBadge(o.status, o.payment_method)}</td>
+        </tr>`).join('')}</tbody></table>`
+    : '<div class="text-muted text-sm" style="padding:.5rem">No café orders.</div>';
+  document.getElementById('bd-body').innerHTML=`
+    ${bill.free_of_cost?'<div class="mb-2"><span class="badge badge-orange">Guest / Free of Cost</span></div>':''}
+    <div class="kpi-grid" style="margin-bottom:.75rem">
+      <div class="kpi-card"><div class="kpi-num">${curSync(r.game_amount)}</div><div class="kpi-label">Game Charges</div></div>
+      <div class="kpi-card"><div class="kpi-num">${curSync(r.cafe_amount)}</div><div class="kpi-label">Cafe Charges</div></div>
+      <div class="kpi-card"><div class="kpi-num">${curSync(r.discount || 0)}</div><div class="kpi-label">Discount</div></div>
+      <div class="kpi-card"><div class="kpi-num text-green">${curSync(r.paid)}</div><div class="kpi-label">Paid</div></div>
+      <div class="kpi-card"><div class="kpi-num text-red">${curSync(r.loan)}</div><div class="kpi-label">On Loan</div></div>
+      <div class="kpi-card"><div class="kpi-num text-red">${curSync(r.balance)}</div><div class="kpi-label">Balance</div></div>
+    </div>
+    <div class="card-title mb-1">🎱 Games</div>${gamesHtml}
+    <div class="card-title mb-1 mt-2">☕ Café Orders</div>${orderHtml}`;
+  openModal('modal-bill-detail');
+}
+async function deleteGameFromBill(id){
+  if(!confirm('Is game ko aur is se linked loan/cafe record delete karna hai? Ye undo nahi ho sakta.')) return;
+  const r=await DEL(`/api/games/${id}`);
+  if(r?.ok){
+    closeModal('modal-bill-detail');
+    toast('Game deleted');
+    loadBills(billsPage);
+    loadDashboard();
+  } else toast(r?.error||'Error','error');
+}
+function openCheckout(id,balance,name,phone='',plusAvailable=0){
+  document.getElementById('co-bill-id').value=id;
+  document.getElementById('co-free-of-cost').value='0';
+  const freeButton=document.getElementById('co-free-button'); freeButton.className='btn btn-ghost btn-sm'; freeButton.textContent='Guest / Free of Cost';
+  document.getElementById('co-phone').value=phone;
+  document.getElementById('co-plus-available').value=Math.max(0,Number(plusAvailable)||0);
+  document.getElementById('co-amount').value = balance;
+  const maxPlus=Math.min(balance,Number(plusAvailable)||0);
+  document.getElementById('co-discount').value=0;
+  document.getElementById('co-cash').value=Math.max(0,balance-maxPlus);
+  document.getElementById('co-online').value='';
+  document.getElementById('co-loan').value='';
+  const om=document.getElementById('co-online-method'); if(om) om.value='easypaisa';
+  const lp=document.getElementById('co-loan-phone'); if(lp) lp.value=phone||'';
+  document.getElementById('co-details').innerHTML=`
+    <div class="flex-between mb-1"><span class="text-muted text-xs">Player</span><strong>${name}</strong></div>
+    <div class="flex-between mt-1"><span class="text-muted text-xs">Balance Due</span><span class="text-red fw-600">${curSync(balance)}</span></div>
+    <div class="flex-between mt-1"><label class="text-muted text-xs" for="co-plus-amount">Plus Games to use (max ${curSync(maxPlus)})</label><input id="co-plus-amount" class="form-control" type="number" min="0" max="${maxPlus}" step="0.01" value="${maxPlus}" style="width:120px" oninput="calcCheckout('plus')" /></div>`;
+  calcCheckout();
+  openModal('modal-checkout');
+}
+function toggleFreeOfCostCheckout(){
+  const flag=document.getElementById('co-free-of-cost');
+  const enabled=flag.value!=='1';
+  if(enabled&&!confirm('Clear this bill as a guest/free-of-cost write-off? No cash or loan will be recorded.')) return;
+  flag.value=enabled?'1':'0';
+  const button=document.getElementById('co-free-button');
+  button.className=enabled?'btn btn-danger btn-sm':'btn btn-ghost btn-sm';
+  button.textContent=enabled?'Guest / Free of Cost: ON':'Guest / Free of Cost';
+  calcCheckout();
+}
+function calcCheckout(src) {
+  const amt=Number(document.getElementById('co-amount').value)||0;
+  const plusAvailable=Number(document.getElementById('co-plus-available').value)||0;
+  const plusInput=document.getElementById('co-plus-amount');
+  const maxPlus=Math.min(amt,plusAvailable);
+  const plusUsed=Math.round(Math.max(0,Math.min(maxPlus,Number(plusInput?.value)||0))*100)/100;
+  if(plusInput) plusInput.value=plusUsed;
+    if(document.getElementById('co-free-of-cost').value==='1'){
+      document.getElementById('co-discount').value=Math.max(0,amt-plusUsed);
+      document.getElementById('co-cash').value=0;
+      document.getElementById('co-online').value=0;
+      document.getElementById('co-loan').value=0;
+    }
+    const disc = Number(document.getElementById('co-discount').value) || 0;
+    const topay = Math.max(0, amt - plusUsed - disc);
+    document.getElementById('co-topay').value = topay;
+    let online = Number(document.getElementById('co-online').value) || 0;
+    let loan = Number(document.getElementById('co-loan').value) || 0;
+    if (src !== 'cash' && online + loan > topay) {
+      online = Math.min(online, topay);
+      loan = Math.min(loan, Math.max(0, topay - online));
+      document.getElementById('co-online').value = online;
+      document.getElementById('co-loan').value = loan;
+    }
+    let cash = Number(document.getElementById('co-cash').value) || 0;
+    if (src !== 'cash') {
+      cash = Math.max(0, Math.round((topay - online - loan) * 100) / 100);
+      document.getElementById('co-cash').value = cash;
+    }
+    const alloc = cash + online + loan;
+    document.getElementById('co-allocated').textContent = curSync(alloc);
+    const remain = Math.round((topay - alloc) * 100) / 100;
+    const remEl = document.getElementById('co-remain');
+    remEl.textContent = curSync(remain);
+    remEl.className = 'fw-600 ' + (remain === 0 ? 'text-green' : 'text-red');
+    const wrap = document.getElementById('co-loan-phone-wrap');
+    if (wrap) wrap.style.display = loan > 0 ? 'block' : 'none';
+    updateCheckoutStatus(cash, online, loan, remain);
+  }
+  async function doCheckout() {
+  const id=document.getElementById('co-bill-id').value;
+  const discount=document.getElementById('co-discount').value;
+  const cash=Number(document.getElementById('co-cash').value)||0;
+  const online=Number(document.getElementById('co-online').value)||0;
+  const loan=Number(document.getElementById('co-loan').value)||0;
+  const topay=Number(document.getElementById('co-topay').value)||0;
+  if (Math.abs(cash+online+loan-topay)>0.05) {
+    toast('Cash + Online + Loan must equal To Pay','error');
+    return;
+  }
+  let phone = document.getElementById('co-loan-phone')?.value.trim() || document.getElementById('co-phone').value;
+  
+  if (loan > 0 && !phone) {
+    phone = prompt('A phone number is required for the loan amount. Please enter phone number:');
+    if (!phone) {
+      toast('Phone number is required to save loan!', 'error');
+      return;
+    }
+  }
+  if (loan > 0) {
+    const phoneRes = await PUT(`/api/bills/${id}/phone`, { phone });
+    if (!phoneRes?.ok) {
+      toast('Failed to save phone number', 'error');
+      return;
+    }
+    document.getElementById('co-phone').value = phone;
+  }
+
+  const online_method=document.getElementById('co-online-method')?.value||'easypaisa';
+  const free_of_cost=document.getElementById('co-free-of-cost').value==='1';
+  const plus_amount=Number(document.getElementById('co-plus-amount').value)||0;
+  const res=await POST(`/api/bills/${id}/checkout`,{cash_amount:cash, online_amount:online, loan_amount:loan, plus_amount, discount:Number(discount), online_method, free_of_cost});
+  if(res?.ok){toast(free_of_cost?'Guest/free-of-cost bill cleared':(res.plus_used>0?`Checkout complete! Plus Games ${curSync(res.plus_used)} applied`:'Checkout complete!'));closeModal('modal-checkout');loadBills();}
+  else toast(res?.error||'Error','error');
+}
+
+// ── LOANS ────────────────────────────────────────────────────────
+async function loadAdminLoans(){
+  const from=document.getElementById('lf-from').value,to=document.getElementById('lf-to').value;
+  const status=document.getElementById('lf-status').value,cust=document.getElementById('lf-cust').value;
+  let q=`?from=${from}&to=${to}`;
+  if(status) q+=`&status=${status}`;if(cust) q+=`&customer=${encodeURIComponent(cust)}`;
+  const loans=await GET(`/api/loans${q}`)||[];
+  const persons=await GET(`/api/loans/by-person?from=${from}&to=${to}`)||[];
+  const flagged=persons.filter(p=>p.outstanding>0);
+  document.getElementById('loans-person').innerHTML=flagged.length
+    ?`<table class="data-tbl"><thead><tr><th>Customer</th><th>Phone</th><th>Total Loaned</th><th>Paid Back</th><th>Outstanding</th><th>Open</th><th>Last Date</th></tr></thead>
+       <tbody>${flagged.map(p=>`<tr class="flagged-row">
+         <td class="fw-600">${p.customer_name}</td><td class="text-muted text-sm">${p.phone||'—'}</td>
+         <td>${curSync(p.total_loaned)}</td><td class="text-green">${curSync(p.total_paid)}</td>
+         <td class="fw-600 text-red">${curSync(p.outstanding)}</td>
+         <td><span class="badge badge-red">${p.open_count}</span></td>
+         <td class="text-xs tabular">${fmtDate(p.last_date)}</td>
+       </tr>`).join('')}</tbody></table>`
+    :'<div class="text-muted text-sm" style="padding:.75rem">No outstanding loans in this period ✅</div>';
+
+  const wrap=document.getElementById('loans-table');
+  if(!loans.length){wrap.innerHTML='<div class="empty-state"><div class="ei">💸</div><p>No records.</p></div>';return;}
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Date</th><th>Customer</th><th>Phone</th><th>Loaned</th><th>Paid</th><th>Remaining</th><th>Status</th><th>Reason</th><th>Employee</th><th>Actions</th></tr></thead>
+    <tbody>${loans.map(l=>`<tr class="${l.status!=='paid'?'flagged-row':''}">
+      <td class="text-xs tabular">${fmtDate(l.date)}</td>
+      <td class="fw-600">${l.customer_name}</td>
+      <td class="text-muted text-sm">${l.phone||'—'}</td>
+      <td>${curSync(l.amount)}</td>
+      <td class="text-green">${curSync(l.paid_amount)}</td>
+      <td class="fw-600 text-red">${curSync(l.amount-l.paid_amount)}</td>
+      <td>${loanBadge(l.status)}</td>
+      <td class="text-xs text-muted">${l.reason||'—'}</td>
+      <td class="text-xs text-muted">${l.employee_name}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteLoan(${l.id})">Del</button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+async function loadLoansKPI(){
+  const s=await GET('/api/loans/summary/all'); if(!s) return;
+  document.getElementById('loans-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num">${curSync(s.total_loaned)}</div><div class="kpi-label">Total Loaned</div></div>
+    <div class="kpi-card"><div class="kpi-num text-green">${curSync(s.total_paid)}</div><div class="kpi-label">Recovered</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(s.outstanding)}</div><div class="kpi-label">Outstanding</div></div>
+    <div class="kpi-card"><div class="kpi-num">${s.pending_count}</div><div class="kpi-label">Open Loans</div></div>`;
+}
+async function deleteLoan(id){
+  if(!confirm('Delete this loan record?')) return;
+  const r=await DEL(`/api/loans/${id}`);
+  if(r?.ok){toast('Deleted');loadAdminLoans();}else toast(r?.error||'Error','error');
+}
+
+// ── EXPENSES ─────────────────────────────────────────────────────
+function expenseQuery(source){
+  const from=document.getElementById('ef-from').value,to=document.getElementById('ef-to').value,cat=document.getElementById('ef-cat').value;
+  let q=`?source=${source}&from=${from}&to=${to}`;
+  if(cat) q+=`&category=${encodeURIComponent(cat)}`;
+  return q;
+}
+function renderExpenseTable(wrap,exps,emptyText){
+  if(!exps.length){wrap.innerHTML=`<div class="empty-state"><div class="ei">💰</div><p>${emptyText}</p></div>`;return;}
+  const total=exps.reduce((s,e)=>s+e.amount,0);
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Added By</th><th>Actions</th></tr></thead>
+    <tbody>${exps.map(e=>`<tr>
+      <td class="text-xs tabular">${fmtDate(e.date)}</td>
+      <td><span class="badge badge-blue">${e.category}</span></td>
+      <td class="text-muted text-sm">${e.description||'—'}</td>
+      <td>${curSync(e.amount)}</td>
+      <td class="text-xs text-muted">${e.employee_name||'—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${e.id})">Del</button></td>
+    </tr>`).join('')}</tbody>
+    <tfoot><tr><td colspan="3" class="fw-600">Total</td><td class="fw-600">${curSync(total)}</td><td colspan="2"></td></tr></tfoot></table>`;
+}
+async function addAdminExpense(){
+  const dt=document.getElementById('ae-date').value||todayStr();
+  const cat=document.getElementById('ae-cat').value;
+  const desc=document.getElementById('ae-desc').value.trim();
+  const am=document.getElementById('ae-amount').value;
+  if(!am){toast('Amount required','error');return;}
+  const r=await POST('/api/expenses',{date:dt,category:cat,description:desc,amount:Number(am),source:'admin'});
+  if(r?.ok){
+    toast('Admin expense saved');
+    document.getElementById('ae-amount').value='';
+    document.getElementById('ae-desc').value='';
+    loadExpenses();
+  } else toast(r?.error||'Error','error');
+}
+async function loadExpenses(){
+  const [adminExps,exps]=await Promise.all([
+    GET(`/api/expenses${expenseQuery('admin')}`),
+    GET(`/api/expenses${expenseQuery('employee')}`)
+  ]);
+  const adminList=Array.isArray(adminExps)?adminExps:[];
+  const staffList=Array.isArray(exps)?exps:[];
+  renderExpenseTable(document.getElementById('admin-exp-table'),adminList,'No admin expenses.');
+  const total=staffList.reduce((s,e)=>s+e.amount,0);
+  const byCat={};staffList.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+e.amount);
+  document.getElementById('exp-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num">${staffList.length}</div><div class="kpi-label">Staff Entries</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(total)}</div><div class="kpi-label">Staff Spent</div></div>
+    <div class="kpi-card"><div class="kpi-num">${adminList.length}</div><div class="kpi-label">Admin Entries</div></div>
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(adminList.reduce((s,e)=>s+e.amount,0))}</div><div class="kpi-label">Admin Spent</div></div>
+    ${Object.entries(byCat).map(([c,v])=>`<div class="kpi-card"><div class="kpi-num text-sm">${curSync(v)}</div><div class="kpi-label">${c}</div></div>`).join('')}`;
+  renderExpenseTable(document.getElementById('exp-table'),staffList,'No staff expenses.');
+}
+async function deleteExpense(id){if(!confirm('Delete?')) return;const r=await DEL(`/api/expenses/${id}`);if(r?.ok){toast('Deleted');loadExpenses();}else toast(r?.error||'Error','error');}
+
+// ── BOARD CLEARS ─────────────────────────────────────────────────
+async function loadBoardClears(){
+  const from=document.getElementById('bc-from').value,to=document.getElementById('bc-to').value;
+  let q='?'; if(from) q+=`from=${from}`; if(to) q+=`${from?'&':''}to=${to}`;
+  let expQ=`?source=admin`; if(from) expQ+=`&from=${from}`; if(to) expQ+=`&to=${to}`;
+  const [rowsRaw,adminExps]=await Promise.all([
+    GET(`/api/reports/board-clears${q==='?'?'':q}`),
+    GET(`/api/expenses${expQ}`)
+  ]);
+  const rows=Array.isArray(rowsRaw)?rowsRaw:[];
+  const adminList=Array.isArray(adminExps)?adminExps:[];
+  const adminByDate={};
+  adminList.forEach(e=>{const d=e.date;adminByDate[d]=(adminByDate[d]||0)+Number(e.amount||0);});
+  const seenDates=new Set();
+  rows.forEach(r=>{
+    const d=(r.cleared_at||'').slice(0,10);
+    if(d && !seenDates.has(d)){
+      r.admin_expenses=adminByDate[d]||0;
+      seenDates.add(d);
+    } else {
+      r.admin_expenses=0;
+    }
+  });
+  const extra=Object.keys(adminByDate).filter(d=>!seenDates.has(d)).sort().reverse().map(d=>({
+    cleared_at:d, cash_sale:0, online_sale:0, game_sale:0, cafe_sale:0,
+    games_count:0, expenses:0, discount:0, cleared_by:'', cleared_by_role:'',
+    total_sale:0, admin_expenses:adminByDate[d], _adminOnly:true
+  }));
+  const display=[...extra,...rows];
+  const adminTotal=adminList.reduce((s,e)=>s+Number(e.amount||0),0);
+  const profit=rows.reduce((sum,r)=>sum+Number(r.total_sale||0)-Number(r.expenses||0),0)-adminTotal;
+  document.getElementById('clears-kpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-num text-red">${curSync(adminTotal)}</div><div class="kpi-label">Admin Expenses</div></div>
+    <div class="kpi-card"><div class="kpi-num ${profit>=0?'text-green':'text-red'}">${curSync(profit)}</div><div class="kpi-label">Profit</div></div>`;
+  const wrap=document.getElementById('clears-table');
+  if(!display.length){wrap.innerHTML='<div class="empty-state"><div class="ei">📈</div><p>No revenue records yet.</p></div>';return;}
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr>
+    <th>Date</th><th>Time</th><th>Cash</th><th>Online</th><th>Game Sale</th><th>Cafe Sale</th><th>Games</th><th>Expenses</th><th>Admin Expenses</th><th>Discount</th><th>Cleared By</th><th>Total Sale</th>
+  </tr></thead><tbody>${display.map(r=>{
+    const stamp=r.cleared_at||'';
+    const datePart=stamp.slice(0,10);
+    const timePart=r._adminOnly?'':stamp.slice(11,16);
+    const rowTotal=Number(r.total_sale||0)-Number(r.expenses||0)-Number(r.admin_expenses||0);
+    return `<tr>
+      <td class="tabular">${fmtDate(datePart)}</td>
+      <td class="tabular">${timePart?fmtTime12(timePart):'—'}</td>
+      <td>${curSync(r.cash_sale)}</td>
+      <td class="text-green">${curSync(r.online_sale)}</td>
+      <td>${curSync(r.game_sale)}</td>
+      <td>${curSync(r.cafe_sale)}</td>
+      <td>${r.games_count||0}</td>
+      <td class="text-red">${curSync(r.expenses)}</td>
+      <td class="text-red">${curSync(r.admin_expenses)}</td>
+      <td>${curSync(r.discount)}</td>
+      <td class="text-muted text-sm">${r._adminOnly?'Admin expense':((r.cleared_by||'—')+(r.cleared_by_role?` <span class="badge ${r.cleared_by_role==='admin'?'badge-blue':'badge-green'}">${r.cleared_by_role==='admin'?'Admin':'Employee'}</span>`:''))}</td>
+      <td class="text-green fw-600">${curSync(rowTotal)}</td>
+    </tr>`;
+  }).join('')}</tbody><tfoot><tr><td colspan="8" class="fw-600">Total</td><td class="text-red fw-600">${curSync(adminTotal)}</td><td colspan="2"></td><td class="text-green fw-600">${curSync(profit)}</td></tr></tfoot></table>`;
+}
+
+// ── CAFÉ INVENTORY ───────────────────────────────────────────────
+function initCafeCategorySelects(){
+  fillCafeCategorySelect(document.getElementById('ci-cat'));
+  fillCafeCategorySelect(document.getElementById('eci-cat'));
+}
+let cafeInvItems=[];
+async function loadCafeInventory(){
+  cafeInvItems=await GET('/api/cafe/inventory')||[];
+  renderCafeInventory();
+}
+function renderCafeInventory(){
+  const wrap=document.getElementById('cafe-inv-table');
+  const q=(document.getElementById('ci-search')?.value||'').trim().toLowerCase();
+  if(!cafeInvItems.length){wrap.innerHTML='<div class="empty-state"><div class="ei">☕</div><p>No items yet.</p></div>';return;}
+  const items=q?cafeInvItems.filter(item=>(item.name||'').toLowerCase().includes(q)||(item.category||'').toLowerCase().includes(q)):cafeInvItems;
+  if(!items.length){wrap.innerHTML='<div class="empty-state"><div class="ei">☕</div><p>No items match your search.</p></div>';return;}
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Category</th><th>Name</th><th>Purchase</th><th>Sale</th><th>Margin</th><th>Stock</th><th>Actions</th></tr></thead>
+    <tbody>${items.map(item=>{const margin=(item.price||0)-(item.cost_price||0);return `<tr>
+      <td class="text-muted text-xs">${item.category}</td>
+      <td class="fw-600">${item.name}</td>
+      <td class="text-muted">${curSync(item.cost_price||0)}</td>
+      <td>${curSync(item.price)}</td>
+      <td class="${margin>=0?'text-green':'text-red'}">${curSync(margin)}</td>
+      <td>${item.stock<=5?`<span class="badge badge-red">${item.stock}</span>`:item.stock}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick='openEditCafe(${JSON.stringify(item)})'>Edit</button>
+        <button class="btn btn-info btn-sm" onclick="restockItem(${item.id},'${item.name.replace(/'/g,"\\'")}')">Restock</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCafeItem(${item.id})">Del</button>
+      </td>
+    </tr>`;}).join('')}</tbody></table>`;
+}
+async function addCafeItem(){
+  const n=document.getElementById('ci-name').value.trim(),cat=document.getElementById('ci-cat').value;
+  const pr=document.getElementById('ci-price').value,cost=document.getElementById('ci-cost').value,st=document.getElementById('ci-stock').value;
+  if(!n||!cat||!pr){toast('Name, category and price required','error');return;}
+  const r=await POST('/api/cafe/inventory',{name:n,category:cat,price:Number(pr),cost_price:Number(cost||0),stock:Number(st||0),unit:'piece'});
+  if(r?.ok){toast('Item added');['ci-name','ci-price','ci-cost','ci-stock'].forEach(id=>document.getElementById(id).value='');fillCafeCategorySelect(document.getElementById('ci-cat'));loadCafeInventory();}
+  else toast(r?.error||'Error','error');
+}
+function openEditCafe(item){
+  document.getElementById('eci-id').value=item.id;
+  document.getElementById('eci-name').value=item.name;
+  fillCafeCategorySelect(document.getElementById('eci-cat'), item.category);
+  document.getElementById('eci-price').value=item.price;
+  document.getElementById('eci-cost').value=item.cost_price||0;
+  document.getElementById('eci-stock').value=item.stock;
+  document.getElementById('eci-active').value=item.active;
+  openModal('modal-edit-cafe');
+}
+async function saveCafeItem(){
+  const id=document.getElementById('eci-id').value;
+  const r=await PUT(`/api/cafe/inventory/${id}`,{
+    name:document.getElementById('eci-name').value.trim(),
+    category:document.getElementById('eci-cat').value,
+    price:Number(document.getElementById('eci-price').value),
+    cost_price:Number(document.getElementById('eci-cost').value||0),
+    stock:Number(document.getElementById('eci-stock').value),
+    active:Number(document.getElementById('eci-active').value),
+  });
+  if(r?.ok){toast('Updated');closeModal('modal-edit-cafe');loadCafeInventory();}else toast(r?.error||'Error','error');
+}
+async function restockItem(id,name){
+  const qty=prompt(`Add stock for ${name}:\nHow many units to add?`); if(!qty||isNaN(qty)) return;
+  const r=await POST(`/api/cafe/inventory/${id}/restock`,{qty:Number(qty)});
+  if(r?.ok){toast(`Added ${qty} units`);loadCafeInventory();}else toast(r?.error||'Error','error');
+}
+async function deleteCafeItem(id){if(!confirm('Deactivate this item?')) return;const r=await DEL(`/api/cafe/inventory/${id}`);if(r?.ok){toast('Deactivated');loadCafeInventory();}else toast(r?.error||'Error','error');}
+
+// ── TABLE CAFÉ ORDERS ────────────────────────────────────────────
+let tableOrderCart=[];
+async function openTableCafeOrder(gameId,tableId,playerName){
+  tableOrderCart=[];
+  document.getElementById('tco-game-id').value=gameId;
+  document.getElementById('tco-table-id').value=tableId;
+  document.getElementById('tco-player-name').value=playerName||'';
+  document.getElementById('tco-title').textContent=playerName||`Game ${gameId}`;
+  const items=await GET('/api/cafe/inventory')||[];
+  const grid=document.getElementById('tco-items');
+  grid.innerHTML=items.map(item=>`
+    <div class="cafe-item ${item.stock<=0?'out-of-stock':''}" onclick="${item.stock>0?`addTableOrderItem(${item.id})`:''}">
+      <div class="ci-cat" style="font-size:.65rem">${item.category}</div>
+      <div class="ci-name" style="font-size:.75rem;font-weight:600">${item.name}</div>
+      <div class="ci-price" style="font-size:.7rem">Rs. ${item.price}</div>
+      <div class="ci-stock" style="font-size:.65rem">Stock: ${item.stock}</div>
+    </div>`).join('');
+  renderTableOrderCart();
+  openModal('modal-table-cafe');
+}
+function addTableOrderItem(itemId){
+  const items=document.querySelectorAll('.cafe-item');
+  let item_name='Item';
+  let price=0;
+  for(const el of items){
+    if(el.getAttribute('onclick')?.includes(`${itemId}`)){
+      item_name=el.querySelector('.ci-name').textContent;
+      price=parseInt(el.querySelector('.ci-price').textContent.match(/\d+/)[0]);
+      break;
+    }
+  }
+  const existing=tableOrderCart.find(x=>x.item_id===itemId);
+  if(existing) existing.qty++;
+  else tableOrderCart.push({item_id:itemId,item_name,qty:1,price});
+  renderTableOrderCart();
+}
+function renderTableOrderCart(){
+  const wrap=document.getElementById('tco-cart');
+  if(!tableOrderCart.length){wrap.innerHTML='<div class="text-muted">No items selected</div>';document.getElementById('tco-total').textContent='Rs. 0';return;}
+  const total=tableOrderCart.reduce((s,x)=>s+x.qty*x.price,0);
+  wrap.innerHTML=tableOrderCart.map(x=>`<div class="flex-between mb-1" style="font-size:.8rem;padding:.3rem 0">
+    <span>${x.item_name}</span>
+    <div class="flex gap-1" style="align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="changeTableOrderQty(${x.item_id},-1)" style="padding:1px 4px;font-size:.7rem">−</button>
+      <span class="tabular" style="width:40px;text-align:center">${x.qty}×${x.price}</span>
+      <button class="btn btn-ghost btn-sm" onclick="changeTableOrderQty(${x.item_id},1)" style="padding:1px 4px;font-size:.7rem">+</button>
+      <button class="btn btn-danger btn-sm" onclick="removeTableOrderItem(${x.item_id})" style="padding:1px 4px;font-size:.7rem">✕</button>
+    </div>
+  </div>`).join('');
+  document.getElementById('tco-total').textContent=`Rs. ${total}`;
+}
+function changeTableOrderQty(itemId,delta){
+  const it=tableOrderCart.find(x=>x.item_id===itemId);if(!it) return;
+  it.qty+=delta;
+  if(it.qty<=0) tableOrderCart=tableOrderCart.filter(x=>x.item_id!==itemId);
+  renderTableOrderCart();
+}
+function removeTableOrderItem(itemId){tableOrderCart=tableOrderCart.filter(x=>x.item_id!==itemId);renderTableOrderCart();}
+async function placeTableCafeOrder(){
+  if(!tableOrderCart.length){toast('Select items first','error');return;}
+  const gameId=document.getElementById('tco-game-id').value;
+  const tableId=document.getElementById('tco-table-id').value;
+  const playerName=document.getElementById('tco-player-name').value;
+  const items=tableOrderCart.map(x=>({item_id:x.item_id,qty:x.qty}));
+  const r=await POST('/api/cafe/orders',{game_id:gameId,table_id:tableId,player_name:playerName||null,items,date:todayStr(),created_at:nowDateTime()});
+  if(r?.ok){toast(`Order placed — Rs.${r.total}`);tableOrderCart=[];closeModal('modal-table-cafe');loadAdminBoard();}
+  else toast(r?.error||'Error','error');
+}
+
+// ── CAFÉ REPORTS ─────────────────────────────────────────────────
+async function loadCafeReport(){
+  const date=document.getElementById('crf-date').value||todayStr();
+  const summary=await GET(`/api/cafe/summary?date=${date}`);
+  const stock=await GET(`/api/cafe/stock-summary?date=${date}`)||[];
+  const orders=await GET(`/api/cafe/orders?date=${date}`)||[];
+  // Profit = revenue − cost of goods sold (purchase price × units sold), summed across items
+  const soldValue=stock.reduce((s,r)=>s+(r.revenue_today||0),0);
+  const costValue=stock.reduce((s,r)=>s+(r.cost_today||0),0);
+  const profitValue=soldValue-costValue;
+  if(summary){
+    document.getElementById('cafe-kpi').innerHTML=`
+      <div class="kpi-card"><div class="kpi-num">${summary.order_count}</div><div class="kpi-label">Orders</div></div>
+      <div class="kpi-card"><div class="kpi-num">${curSync(summary.total)}</div><div class="kpi-label">Cafe Sale</div></div>
+      <div class="kpi-card"><div class="kpi-num text-red">${curSync(costValue)}</div><div class="kpi-label">Cost of Goods</div></div>
+      <div class="kpi-card"><div class="kpi-num ${profitValue>=0?'text-green':'text-red'}">${curSync(profitValue)}</div><div class="kpi-label">Profit</div></div>
+      <div class="kpi-card"><div class="kpi-num text-green">${curSync(summary.plus_used)}</div><div class="kpi-label">Plus Used</div></div>
+      <div class="kpi-card"><div class="kpi-num text-red">${curSync(summary.pending)}</div><div class="kpi-label">Pending</div></div>`;
+  }
+  const sw=document.getElementById('cafe-stock-table');
+  sw.innerHTML=stock.length?`<table class="data-tbl"><thead><tr><th>Item</th><th>Category</th><th>Purchase</th><th>Sale</th><th>Sold</th><th>Revenue</th><th>Cost</th><th>Profit</th><th>Remaining Stock</th></tr></thead>
+    <tbody>${stock.map(r=>{const profit=(r.revenue_today||0)-(r.cost_today||0);return `<tr>
+      <td class="fw-600">${r.name}</td><td class="text-muted text-xs">${r.category}</td>
+      <td class="text-muted">${curSync(r.cost_price||0)}</td>
+      <td>${curSync(r.price)}</td><td>${r.sold_today||0}</td>
+      <td>${r.revenue_today?curSync(r.revenue_today):'—'}</td>
+      <td class="text-muted">${r.cost_today?curSync(r.cost_today):'—'}</td>
+      <td class="${profit>=0?'text-green':'text-red'}">${r.sold_today?curSync(profit):'—'}</td>
+      <td>${r.current_stock<=5?`<span class="badge badge-red">${r.current_stock}</span>`:r.current_stock}</td>
+    </tr>`;}).join('')}
+    <tfoot><tr><td colspan="5">Total</td><td class="fw-600">${curSync(soldValue)}</td><td class="fw-600">${curSync(costValue)}</td><td class="fw-600 ${profitValue>=0?'text-green':'text-red'}">${curSync(profitValue)}</td><td></td></tr></tfoot>
+    </table>`:'<div class="empty-state"><div class="ei">📦</div><p>No sales.</p></div>';
+  const ow=document.getElementById('cafe-orders-table');
+  ow.innerHTML=orders.length?`<table class="data-tbl"><thead><tr><th>Time</th><th>Player/Game</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+    <tbody>${orders.map(o=>`<tr>
+      <td class="tabular text-sm">${fmtTime12(orderClock(o.created_at))||'—'}</td>
+      <td>${o.player_name||`Game ${o.table_id||'?'}`}</td>
+      <td class="text-xs text-muted">${o.items?.map(i=>`${i.item_name}×${i.qty}`).join(', ')||'—'}</td>
+      <td class="fw-600">${curSync(o.total)}</td>
+      <td>${payBadge(o.status,o.payment_method)}</td>
+    </tr>`).join('')}</tbody></table>`:'<div class="empty-state"><div class="ei">☕</div><p>No orders.</p></div>';
+}
+
+// ── EMPLOYEES ────────────────────────────────────────────────────
+async function addEmployee(){
+  const fn=document.getElementById('ne-fname').value.trim(),un=document.getElementById('ne-uname').value.trim();
+  const pw=document.getElementById('ne-pass').value,ph=document.getElementById('ne-phone').value.trim();
+  const ro=document.getElementById('ne-role').value;
+  if(!fn||!un||!pw){toast('Name, username, password required','error');return;}
+  const r=await POST('/api/users',{full_name:fn,username:un,password:pw,phone:ph,role:ro});
+  if(r?.ok){toast('Employee created');['ne-fname','ne-uname','ne-pass','ne-phone'].forEach(id=>document.getElementById(id).value='');loadEmployees();loadAllEmps();}
+  else toast(r?.error||'Error','error');
+}
+async function loadEmployees(){
+  let emps=await GET('/api/users')||[];
+  // A "deleted" employee that still has games/audit history attached can't be hard-removed without
+  // losing that history, so the backend soft-deactivates it instead — hide those from the default
+  // list (matching what "Delete" implies) unless the admin explicitly wants to see/reactivate them.
+  const showInactive=document.getElementById('emp-show-inactive')?.checked;
+  if(!showInactive) emps=emps.filter(e=>e.active);
+  if(!emps.length){document.getElementById('emp-table').innerHTML='<div class="empty-state"><div class="ei">👥</div><p>No employees.</p></div>';return;}
+  document.getElementById('emp-table').innerHTML=`<table class="data-tbl"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${emps.map(e=>`<tr>
+      <td class="fw-600">${e.full_name}</td>
+      <td class="tabular text-sm">${e.username}</td>
+      <td>${e.role==='admin'?'<span class="badge badge-gold">Admin</span>':'<span class="badge badge-blue">Employee</span>'}</td>
+      <td class="text-muted text-sm">${e.phone||'—'}</td>
+      <td>${e.active?'<span class="badge badge-green">Active</span>':'<span class="badge badge-red">Inactive</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick='openEditEmp(${JSON.stringify(e)})'>Edit</button>
+        ${e.active ? `<button class="btn btn-danger btn-sm" onclick="deleteEmployee(${e.id})">Del</button>` : ''}
+      </td>
+    </tr>`).join('')}</tbody></table>`;
+}
+function openEditEmp(e){
+  document.getElementById('ee-id').value=e.id;document.getElementById('ee-fname').value=e.full_name;
+  document.getElementById('ee-phone').value=e.phone||'';document.getElementById('ee-role').value=e.role;
+  document.getElementById('ee-active').value=e.active;document.getElementById('ee-pass').value='';
+  openModal('modal-edit-emp');
+}
+async function saveEditEmp(){
+  const id=document.getElementById('ee-id').value;
+  const body={full_name:document.getElementById('ee-fname').value.trim(),phone:document.getElementById('ee-phone').value.trim(),role:document.getElementById('ee-role').value,active:Number(document.getElementById('ee-active').value)};
+  const p=document.getElementById('ee-pass').value; if(p) body.password=p;
+  const r=await PUT(`/api/users/${id}`,body);
+  if(r?.ok){toast('Updated');closeModal('modal-edit-emp');loadEmployees();loadAllEmps();}else toast(r?.error||'Error','error');
+}
+async function deleteEmployee(id){if(!confirm('Delete this employee?')) return;const r=await DEL(`/api/users/${id}`);if(r?.ok){toast(r.status === 'deleted' ? 'Employee permanently deleted' : 'Employee deactivated due to existing records');loadEmployees();}else toast(r?.error||'Error','error');}
+
+// ── TABLES ───────────────────────────────────────────────────────
+async function addTable(){
+  const n=document.getElementById('nt-name').value.trim(),rg=document.getElementById('nt-rate-game').value,rm=document.getElementById('nt-rate-min').value;
+  if(!n){toast('Game name required','error');return;}
+  const r=await POST('/api/tables',{name:n,rate_game:Number(rg||100),rate_min:Number(rm||3)});
+  if(r?.ok){toast('Game added');document.getElementById('nt-name').value='';loadTables();loadAllTables();}else toast(r?.error||'Error','error');
+}
+function ballPricesSummary(t){
+  const tiers=[['15ball',t.price_15ball],['10ball',t.price_10ball],['6ball',t.price_6ball],['1ball',t.price_1ball]];
+  const set=tiers.filter(([,v])=>v!==null&&v!==undefined);
+  if(!set.length) return '<span class="text-muted text-xs">—</span>';
+  return set.map(([label,v])=>`<span class="badge badge-blue text-xs">${label}: ${curSync(v)}</span>`).join(' ');
+}
+function parseRateTypes(t){
+  try{
+    const v=typeof t.game_rate_types==='string'?JSON.parse(t.game_rate_types):t.game_rate_types;
+    return Array.isArray(v)&&v.length?v:['game'];
+  }catch{return ['game'];}
+}
+function gameRatesSummary(t){
+  const types=parseRateTypes(t);
+  const bits=[];
+  if(types.includes('game')||!types.length) bits.push(`${curSync(t.rate_game)}/game`);
+  if(types.includes('token')&&t.rate_token!=null) bits.push(`${curSync(t.rate_token)}/token`);
+  if(types.includes('min')) bits.push(`${curSync(t.rate_min)}/min`);
+  if(types.includes('30min')&&t.rate_30min!=null) bits.push(`${curSync(t.rate_30min)}/30m`);
+  if(types.includes('hour')&&t.rate_hour!=null) bits.push(`${curSync(t.rate_hour)}/hr`);
+  return bits.join(' · ')||curSync(t.rate_game);
+}
+async function loadTables(){
+  const tables=await GET('/api/tables?include_inactive=1')||[];
+  window._adminTablesCache=tables;
+  document.getElementById('tables-list').innerHTML=`<table class="data-tbl"><thead><tr><th>Type</th><th>Name</th><th>Rates</th><th>Ball-Count</th><th>Status</th><th>Now</th><th>Actions</th></tr></thead>
+    <tbody>${tables.map(t=>{
+      const isGame=t.table_kind==='game';
+      return `<tr>
+      <td>${isGame?'<span class="badge badge-blue">Game</span>':'<span class="badge badge-gold">Snooker</span>'}</td>
+      <td class="fw-600">${t.name}</td>
+      <td>${isGame?gameRatesSummary(t):`${curSync(t.rate_game)}/game · Century ${curSync(t.rate_min)}/min${t.rate_hour!=null?` / ${curSync(t.rate_hour)}/hr`:''}${t.snooker_rate_min!=null?` · Table ${curSync(t.snooker_rate_min)}/min`:''}${t.snooker_rate_hour!=null?` / ${curSync(t.snooker_rate_hour)}/hr`:''}`}</td>
+      <td>${isGame?'<span class="text-muted text-xs">—</span>':ballPricesSummary(t)}</td>
+      <td>${t.active?'<span class="badge badge-green">Active</span>':'<span class="badge badge-red">Inactive</span>'}</td>
+      <td>${t.active_game?`<span class="badge badge-green">▶ Live</span>`:'<span class="text-muted text-xs">Free</span>'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="openEditTableById(${t.id})">Edit</button>${t.active?'':` <button class="btn btn-success btn-sm" onclick="activateTable(${t.id})">Activate</button>`}</td>
+    </tr>`;
+    }).join('')}</tbody></table>`;
+}
+function openEditTableById(id){
+  const t=(window._adminTablesCache||[]).find(x=>x.id===id);
+  if(t) openEditTable(t);
+  else GET('/api/tables?include_inactive=1').then(rows=>{window._adminTablesCache=rows||[];openEditTable((rows||[]).find(x=>x.id===id));});
+}
+async function activateTable(id){
+  const r=await PUT(`/api/tables/${id}`,{active:1});
+  if(r?.ok){await Promise.all([loadTables(),loadAllTables()]);toast('Table activated');}
+  else toast(r?.error||'Error','error');
+}
+function openEditTable(t){
+  if(!t) return;
+  const isGame=t.table_kind==='game';
+  document.getElementById('et-id').value=t.id;
+  document.getElementById('et-kind').value=isGame?'game':'snooker';
+  document.getElementById('et-title').textContent='✏️ Edit Game';
+  document.getElementById('et-name-lbl').textContent='Game Name';
+  document.getElementById('et-name').value=t.name;
+  document.getElementById('et-rate-game').value=t.rate_game;
+  document.getElementById('et-extra-charges').value=t.extra_charges??'';
+  document.getElementById('et-active').value=t.active;
+  document.getElementById('et-snooker-fields').style.display=isGame?'none':'';
+  document.getElementById('et-game-fields').style.display=isGame?'':'none';
+  document.getElementById('modal-edit-table').querySelector('.modal-box').classList.toggle('wide', isGame);
+  if(isGame){
+    const style=t.game_style||'controller';
+    document.querySelectorAll('input[name="et-g-style"]').forEach(r=>{r.checked=r.value===style;});
+    let modes=[];
+    try{modes=typeof t.game_modes==='string'?JSON.parse(t.game_modes):t.game_modes||[];}catch{modes=[];}
+    if(!Array.isArray(modes)||!modes.length) modes=['single_player','1v1','2v2'];
+    document.getElementById('et-m-sp').checked=modes.includes('single_player');
+    document.getElementById('et-m-1v1').checked=modes.includes('1v1');
+    document.getElementById('et-m-2v2').checked=modes.includes('2v2');
+    document.getElementById('et-rate-token').value=t.rate_token??'';
+    document.getElementById('et-g-rate-min').value=t.rate_min??'';
+    document.getElementById('et-rate-30min').value=t.rate_30min??'';
+    document.getElementById('et-g-rate-hour').value=t.rate_hour??'';
+  }else{
+    document.getElementById('et-rate-min').value=t.rate_min;
+    document.getElementById('et-rate-hour').value=t.rate_hour??'';
+    document.getElementById('et-price-15').value=t.price_15ball??'';document.getElementById('et-price-10').value=t.price_10ball??'';
+    document.getElementById('et-price-6').value=t.price_6ball??'';document.getElementById('et-price-1').value=t.price_1ball??'';
+    document.getElementById('et-snooker-rate-min').value=t.snooker_rate_min??'';
+    document.getElementById('et-snooker-rate-hour').value=t.snooker_rate_hour??'';
+  }
+  openModal('modal-edit-table');
+}
+async function saveEditTable(){
+  const id=document.getElementById('et-id').value;
+  const isGame=document.getElementById('et-kind').value==='game';
+  const ballVal=elId=>{const v=document.getElementById(elId).value;return v===''?'':Number(v);};
+  const optNum=elId=>{const v=document.getElementById(elId).value;return v===''?'':Number(v);};
+  const body={name:document.getElementById('et-name').value.trim(),rate_game:Number(document.getElementById('et-rate-game').value),extra_charges:optNum('et-extra-charges'),active:Number(document.getElementById('et-active').value)};
+  if(isGame){
+    body.rate_token=optNum('et-rate-token');
+    body.rate_min=optNum('et-g-rate-min');
+    body.rate_30min=optNum('et-rate-30min');
+    body.rate_hour=optNum('et-g-rate-hour');
+    body.game_style=document.querySelector('input[name="et-g-style"]:checked')?.value||'controller';
+    const modes=[];
+    if(document.getElementById('et-m-sp').checked) modes.push('single_player');
+    if(document.getElementById('et-m-1v1').checked) modes.push('1v1');
+    if(document.getElementById('et-m-2v2').checked) modes.push('2v2');
+    body.game_modes=modes.length?modes:['single_player','1v1','2v2'];
+    const rateTypes=['game'];
+    if(body.rate_token!=='') rateTypes.push('token');
+    if(body.rate_min!=='') rateTypes.push('min');
+    if(body.rate_30min!=='') rateTypes.push('30min');
+    if(body.rate_hour!=='') rateTypes.push('hour');
+    body.game_rate_types=rateTypes;
+  }else{
+    body.rate_min=Number(document.getElementById('et-rate-min').value);
+    body.rate_hour=document.getElementById('et-rate-hour').value===''?'':Number(document.getElementById('et-rate-hour').value);
+    body.price_15ball=ballVal('et-price-15');body.price_10ball=ballVal('et-price-10');
+    body.price_6ball=ballVal('et-price-6');body.price_1ball=ballVal('et-price-1');
+    body.snooker_rate_min=optNum('et-snooker-rate-min');
+    body.snooker_rate_hour=optNum('et-snooker-rate-hour');
+  }
+  const r=await PUT(`/api/tables/${id}`,body);
+  if(r?.ok){await Promise.all([loadTables(),loadAllTables()]);toast('Updated');closeModal('modal-edit-table');}else toast(r?.error||'Error','error');
+}
+
+// ── VOID REQUESTS ────────────────────────────────────────────────
+async function checkVoidCount(){
+  const rows=await GET('/api/games/void/pending')||[];
+  const el=document.getElementById('void-count');
+  if(rows.length>0){el.textContent=rows.length;el.style.display='inline';}else el.style.display='none';
+}
+async function loadVoidRequests(){
+  const rows=await GET('/api/games/void/pending')||[];
+  const wrap=document.getElementById('void-table');
+  if(!rows.length){wrap.innerHTML='<div class="empty-state"><div class="ei">✅</div><p>No pending void requests.</p></div>';return;}
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Requested</th><th>Game</th><th>Type</th><th>Players</th><th>Date</th><th>By</th><th>Reason</th><th>Actions</th></tr></thead>
+    <tbody>${rows.map(r=>{
+      const pl=[r.player1,r.player2,r.player3,r.player4].filter(Boolean).join(' / ')||'Century';
+      return `<tr>
+        <td class="text-xs tabular">${fmtDateTime(r.created_at)}</td>
+        <td><span class="badge badge-gold">${r.table_name}</span></td>
+        <td>${typeBadge(r.game_type)}</td>
+        <td class="fw-600 text-sm">${pl}</td>
+        <td class="text-xs tabular">${fmtDate(r.date)}</td>
+        <td class="text-sm">${r.requester}</td>
+        <td class="text-sm">${r.reason}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-danger btn-sm" onclick="approveVoid(${r.game_id},'${r.reason.replace(/'/g,"\\'")}')">Approve</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('Request noted — notify employee','info')">Reject</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+async function approveVoid(gameId,reason){
+  const r=await POST(`/api/games/${gameId}/void`,{reason});
+  if(r?.ok){toast('Entry voided');loadVoidRequests();checkVoidCount();}else toast(r?.error||'Error','error');
+}
+
+// ── REPORTS ──────────────────────────────────────────────────────
+async function loadReports(){
+  const weekly=await GET(`/api/reports/weekly?from=${addDays(todayStr(),-6)}&to=${todayStr()}`)||[];
+  const monthly=await GET('/api/reports/monthly')||[];
+  document.getElementById('weekly-table').innerHTML=weekly.length
+    ?`<table class="data-tbl"><thead><tr><th>Date</th><th>Games</th><th>Revenue</th><th>Collected</th><th>Café</th><th>Expenses</th><th>Net Profit</th></tr></thead>
+      <tbody>${weekly.map(r=>`<tr><td class="tabular">${fmtDate(r.date)}</td><td>${r.games}</td><td>${curSync(r.revenue)}</td><td>${curSync(r.collected)}</td><td>${curSync(r.cafe||0)}</td><td class="text-red">${curSync(r.expenses)}</td><td class="text-green fw-600">${curSync(r.net)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Total</td><td>${weekly.reduce((s,r)=>s+r.games,0)}</td><td>${curSync(weekly.reduce((s,r)=>s+r.revenue,0))}</td><td>${curSync(weekly.reduce((s,r)=>s+r.collected,0))}</td><td>${curSync(weekly.reduce((s,r)=>s+(r.cafe||0),0))}</td><td class="text-red">${curSync(weekly.reduce((s,r)=>s+r.expenses,0))}</td><td class="text-green">${curSync(weekly.reduce((s,r)=>s+r.net,0))}</td></tr></tfoot></table>`
+    :'<div class="empty-state"><div class="ei">📅</div><p>No data.</p></div>';
+  document.getElementById('monthly-table').innerHTML=monthly.length
+    ?`<table class="data-tbl"><thead><tr><th>Month</th><th>Games</th><th>Revenue</th></tr></thead><tbody>${monthly.map(r=>`<tr><td class="tabular">${r.month}</td><td>${r.games}</td><td>${curSync(r.revenue)}</td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty-state"><div class="ei">📆</div><p>No data.</p></div>';
+}
+
+// ── AUDIT ────────────────────────────────────────────────────────
+async function loadAuditUsers(){const emps=await GET('/api/users')||[];document.getElementById('af-user').innerHTML='<option value="">All</option>'+emps.map(u=>`<option value="${u.id}">${u.full_name}</option>`).join('');}
+async function loadAudit(){
+  const from=document.getElementById('af-from').value,to=document.getElementById('af-to').value,uid=document.getElementById('af-user').value;
+  let q=`?from=${from}&to=${to}`;if(uid) q+=`&user_id=${uid}`;
+  const rows=await GET(`/api/audit${q}`)||[];
+  const wrap=document.getElementById('audit-table');
+  if(!rows.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🔍</div><p>No entries.</p></div>';return;}
+  wrap.innerHTML=`<table class="data-tbl"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Entity</th><th>Detail</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td class="text-xs tabular">${fmtDateTime(r.created_at)}</td>
+      <td class="text-sm">${r.full_name||'—'}</td>
+      <td><span class="badge badge-blue text-xs">${r.action}</span></td>
+      <td class="text-muted text-xs">${r.entity}${r.entity_id?' #'+r.entity_id:''}</td>
+      <td class="text-xs text-muted">${r.detail||'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ── SETTINGS ────────────────────────────────────────────────────
+async function loadSettingsForm(){
+  const s=await GET('/api/settings');
+  document.getElementById('s-name').value=s?.club_name||'';
+  document.getElementById('s-cur').value=s?.currency||'Rs.';
+  document.getElementById('s-rate').value=s?.default_rate||'100';
+  document.getElementById('s-crate').value=s?.century_rate_min||'3';
+  document.getElementById('s-print-paper-size').value=['58mm','76mm','80mm','112mm'].includes(s?.print_paper_size) ? s.print_paper_size : '58mm';
+  document.getElementById('s-esp32-ip').value=s?.esp32_ip||'';
+  document.getElementById('s-esp32-url').value=s?.esp32_url||'';
+  document.getElementById('s-esp32-key').value=s?.esp32_api_key||'';
+  document.getElementById('s-agent-token').value=s?.esp32_agent_token||'';
+}
+async function saveSettings(){
+  const r=await POST('/api/settings',{club_name:document.getElementById('s-name').value.trim(),currency:document.getElementById('s-cur').value.trim(),default_rate:document.getElementById('s-rate').value,century_rate_min:document.getElementById('s-crate').value,print_paper_size:document.getElementById('s-print-paper-size').value,esp32_ip:document.getElementById('s-esp32-ip').value.trim(),esp32_url:document.getElementById('s-esp32-url').value.trim(),esp32_api_key:document.getElementById('s-esp32-key').value});
+  if(r?.ok){toast('Settings saved');document.getElementById('club-name-lbl').textContent=document.getElementById('s-name').value;}
+  else toast(r?.error||'Error','error');
+}
+async function copyEsp32Key(){
+  const key=document.getElementById('s-esp32-key').value;
+  if(!key){toast('ESP32 API Key is empty','error');return;}
+  try{
+    await navigator.clipboard.writeText(key);
+    toast('ESP32 API Key copied');
+  }catch{
+    document.getElementById('s-esp32-key').select();
+    toast('Copy failed. Press Ctrl+C to copy','error');
+  }
+}
+async function checkEsp32Status(){
+  const r=await GET('/api/settings/esp32/status');
+  if(r?.ok){
+    document.getElementById('esp32-status').textContent=`Connected: ${r.connected ? 'Yes' : 'No'} | Wi-Fi: ${r.ssid||r.savedSsid||'-'} | IP: ${r.ip||'-'} | Signal: ${r.rssi||0} dBm`;
+    if(r.ip) document.getElementById('s-esp32-ip').value=r.ip;
+    if(r.ip) document.getElementById('s-esp32-url').value=`http://${r.ip}`;
+  } else toast(r?.error||'ESP32 status failed','error');
+}
+async function changeEsp32Wifi(){
+  const r=await POST('/api/settings/esp32/wifi',{ssid:document.getElementById('s-wifi-ssid').value.trim(),password:document.getElementById('s-wifi-password').value});
+  if(r?.ok){toast('Wi-Fi saved. Check status after 20 seconds.');document.getElementById('s-wifi-password').value='';}
+  else toast(r?.error||'Wi-Fi change failed','error');
+}
+async function resetEsp32Wifi(){
+  if(!confirm('Reset saved ESP32 Wi-Fi and restart it?')) return;
+  const r=await POST('/api/settings/esp32/wifi/reset',{});
+  if(r?.ok) toast('ESP32 is restarting with Wi-Fi reset.');
+  else toast(r?.error||'ESP32 reset failed','error');
+}
+async function changeOwnPassword(){
+  const o=document.getElementById('sp-old').value,n=document.getElementById('sp-new').value,c=document.getElementById('sp-con').value;
+  if(!o||!n){toast('Fill all fields','error');return;}if(n!==c){toast('Passwords do not match','error');return;}
+  const r=await PUT('/api/users/me/password',{old_password:o,new_password:n});
+  if(r?.ok){toast('Password changed! Logging out…');setTimeout(async()=>{await POST('/api/auth/logout');window.location.href='/';},1500);}
+  else toast(r?.error||'Error','error');
+}
+function togglePartial(pfx){const ps=document.getElementById(`${pfx}-payment`).value;const w=document.getElementById(`${pfx}-partial-wrap`);if(w)w.style.display=ps==='partial'?'block':'none';const lp=document.getElementById(`${pfx}-loan-phone-wrap`);if(lp)lp.style.display=ps==='loan'?'block':'none';}
+</script>
+</body>
+</html>
