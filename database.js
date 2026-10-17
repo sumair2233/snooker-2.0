@@ -2,19 +2,24 @@
 const { createClient } = require('@libsql/client');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
+const isVercel = !!process.env.VERCEL;
 const isTurso = !!(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN);
 
 let client;
 if (isTurso) {
   console.log('⚡ Connecting to Turso Cloud SQLite:', process.env.TURSO_DATABASE_URL);
   client = createClient({
-    url: process.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN
+    url: process.env.TURSO_DATABASE_URL.trim(),
+    authToken: process.env.TURSO_AUTH_TOKEN.trim()
   });
 } else {
-  const dataDir = path.join(__dirname, 'data');
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  // Safe directory fallback: use os.tmpdir() on Vercel to prevent EROFS read-only filesystem crash
+  const dataDir = isVercel ? os.tmpdir() : path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) {
+    try { fs.mkdirSync(dataDir, { recursive: true }); } catch (e) {}
+  }
   const dbPath = path.resolve(dataDir, 'cuezone.db').replace(/\\/g, '/');
   console.log('💾 Connecting to local SQLite:', dbPath);
   client = createClient({
@@ -26,24 +31,82 @@ function sanitizeArgs(args = []) {
   return args.map(a => a === undefined ? null : a);
 }
 
+let initPromise = null;
+async function ensureReady() {
+  if (!initPromise) {
+    initPromise = (async () => {
+      try {
+        await db.initSchema();
+
+        // Auto-seed default users if table is empty
+        const userCount = await client.execute('SELECT COUNT(*) as c FROM users').catch(() => null);
+        if (!userCount || userCount.rows[0].c === 0) {
+          console.log('Auto-seeding default admin and employee...');
+          await client.execute({
+            sql: `INSERT OR IGNORE INTO users (id, tenant_id, username, password, full_name, role, phone, active)
+                  VALUES (160, 72, 'admindemo', 'admindemo', 'Demo', 'admin', '03123456789', 1),
+                         (161, 72, 'emp786', 'emp786', 'emp786', 'employee', '', 1)`,
+            args: []
+          });
+        }
+
+        // Auto-seed default tables if table is empty
+        const tableCount = await client.execute('SELECT COUNT(*) as c FROM tables').catch(() => null);
+        if (!tableCount || tableCount.rows[0].c === 0) {
+          console.log('Auto-seeding default tables...');
+          const defaultTables = [
+            [580, 'PS5 1', 350, 30, 'controller'],
+            [582, 'Table 3', 200, 3, 'controller'],
+            [583, 'Table 4', 200, 3, 'controller'],
+            [584, 'Table 5', 200, 3, 'controller'],
+            [585, 'Table 6', 200, 3, 'controller']
+          ];
+          for (const [id, name, rg, rm, gs] of defaultTables) {
+            await client.execute({
+              sql: `INSERT OR IGNORE INTO tables (id, tenant_id, name, rate_game, rate_min, active, game_style, table_kind)
+                    VALUES (?, 72, ?, ?, ?, 1, ?, 'snooker')`,
+              args: [id, name, rg, rm, gs]
+            });
+          }
+        }
+
+        // Auto-seed default settings if empty
+        const settingCount = await client.execute('SELECT COUNT(*) as c FROM settings').catch(() => null);
+        if (!settingCount || settingCount.rows[0].c === 0) {
+          await client.execute({ sql: "INSERT OR IGNORE INTO settings (key, value) VALUES ('club_name', '3D Snooker Club')", args: [] });
+          await client.execute({ sql: "INSERT OR IGNORE INTO settings (key, value) VALUES ('currency', 'Rs.')", args: [] });
+          await client.execute({ sql: "INSERT OR IGNORE INTO settings (key, value) VALUES ('show_club_name', 'true')", args: [] });
+          await client.execute({ sql: "INSERT OR IGNORE INTO settings (key, value) VALUES ('subscription', '{\"sub_type\":\"yearly\",\"active\":1,\"days_left\":340}')", args: [] });
+        }
+      } catch (err) {
+        console.error('Error during auto-initialization:', err);
+      }
+    })();
+  }
+  return initPromise;
+}
+
 const db = {
   client,
   isTurso,
 
   // Return array of objects
   async query(sql, args = []) {
+    await ensureReady();
     const res = await client.execute({ sql, args: sanitizeArgs(args) });
     return res.rows;
   },
 
   // Return single object or null
   async queryOne(sql, args = []) {
+    await ensureReady();
     const res = await client.execute({ sql, args: sanitizeArgs(args) });
     return res.rows[0] || null;
   },
 
   // Execute insert/update/delete
   async execute(sql, args = []) {
+    await ensureReady();
     const res = await client.execute({ sql, args: sanitizeArgs(args) });
     return {
       rowsAffected: res.rowsAffected,
@@ -53,6 +116,7 @@ const db = {
 
   // Execute batch statements in transaction
   async batch(statements) {
+    await ensureReady();
     return await client.batch(statements);
   },
 
